@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+    <title>Multi</title>
+</head>
+<body>
+    <h1>Chat!</h1>
+    <div id="future"></div>
+    <form id="chat_form">
+        <input id="chat_input" type="text" />
+        <input type="submit" value="Send" />
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://127.0.0.1:4200');
+        socket.on("connect", (data) => {
+            socket.emit("join", "Hello world from client");
+        });
+        socket.on("broad", (data) => {
+            $("#future").append(data + "<br />");
+        });
+
+        $("#chat_form").submit((e) => {
+            console.log("submitting message");
+            e.preventDefault();
+            var message = $("#chat_input").val();
+            socket.emit("messages", message);
+        });
+    </script>
+</body>
+</html>
