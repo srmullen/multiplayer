@@ -4,7 +4,7 @@
   "description": "Multi player mobile game framework",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --config webpack.config.js --watch",
+    "dev": "webpack-dashboard -- webpack --config webpack.config.js --watch",
     "start": "node ./app.js"
   },
   "author": "Sean Mullen",
@@ -13,6 +13,8 @@
     "express": "^4.15.3",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-router": "^4.1.1",
+    "react-router-dom": "^4.1.1",
     "socket.io": "^2.0.3"
   },
   "devDependencies": {
@@ -23,7 +25,9 @@
     "babel-preset-stage-3": "^6.24.1",
     "css-loader": "^0.28.4",
     "html-webpack-plugin": "^2.29.0",
+    "prop-types": "^15.5.10",
     "style-loader": "^0.18.2",
-    "webpack": "^3.1.0"
+    "webpack": "^3.1.0",
+    "webpack-dashboard": "^0.4.0"
   }
 }

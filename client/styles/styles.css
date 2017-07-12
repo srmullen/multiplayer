@@ -1,0 +1,11 @@
+body {
+    background-color: #f7fce0;
+}
+
+.login-form {
+    background-color: white;
+    border: 1px solid black;
+    width: 960px;
+    margin: 100px auto 5px auto;
+    padding: 20px;
+}

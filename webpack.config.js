@@ -1,6 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const DashboardPlugin = require("webpack-dashboard/plugin");
 
 module.exports = {
     devtool: "eval-source-map",
@@ -12,6 +13,7 @@ module.exports = {
         filename: "bundle.js"
     },
     plugins:[
+        new DashboardPlugin(),
         new HtmlWebpackPlugin({
             template: "./client/index.html"
         })
