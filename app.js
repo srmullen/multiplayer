@@ -18,14 +18,27 @@ server.listen(4200, () => {
 });
 
 io.on("connection", (client) => {
-    console.log("client connected");
     client.on("join", (data) => {
         console.log(data);
     });
 
+    client.on("create-room", () => {
+        const roomID = generateID();
+        client.join(roomID, () => {
+            const rooms = Object.keys(client.rooms);
+            client.emit("roomCreated", roomID);
+        });
+    });
+
+    client.on("join-room", (data) => {
+        client.join(data.roomID, () => {
+            client.emit("roomJoined", data.roomID);
+            io.to(data.roomID).emit("room-entered", data.name + " has joined the room");
+        });
+    });
+
     client.on("messages", (data) => {
-        console.log("got message");
-        // client.emit("broad", data);
+        console.log("messages");
         client.broadcast.emit("broad", data);
     });
 });

@@ -19,6 +19,18 @@ class Main extends Component {
             roomID: null,
             name: ""
         }
+
+        socket.on("roomCreated", (roomID) => {
+            this.setState({roomID});
+        });
+
+        socket.on("roomJoined", (roomID) => {
+            this.setState({roomID});
+        });
+
+        socket.on("room-entered", (data) => {
+            console.log(data);
+        });
     }
 
     render () {
@@ -30,10 +42,10 @@ class Main extends Component {
             return (
                 <Login
                     joinRoom={(roomID, name) => {
-                        this.setState({roomID, name});
+                        socket.emit("join-room", {roomID, name});
                     }}
                     createRoom={() => {
-                        
+                        socket.emit("create-room");
                     }}
                 />
             );

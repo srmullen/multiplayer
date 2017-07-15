@@ -12,24 +12,26 @@ class Login extends Component {
 
     render () {
         return (
-            <form className="login-form" onSubmit={e => {
-                e.preventDefault();
-                this.props.joinRoom(this.state.roomID, this.state.name);
-            }}>
-                <div>
-                    <label>Name: <input type="text" value={this.state.name} onChange={e => {
-                        this.setState({name: e.target.value});
-                    }} /></label>
-                </div>
-                <div>
-                    <label>Room ID: <input type="text" value={this.state.roomID} onChange={e => {
-                        this.setState({roomID: e.target.value});
-                    }} /></label>
-                </div>
-                <input type="submit" value="Join Room" />
+            <div className="login-form">
+                <form onSubmit={e => {
+                    e.preventDefault();
+                    this.props.joinRoom(this.state.roomID, this.state.name);
+                }}>
+                    <div>
+                        <label>Name: <input type="text" value={this.state.name} onChange={e => {
+                            this.setState({name: e.target.value});
+                        }} /></label>
+                    </div>
+                    <div>
+                        <label>Room ID: <input type="text" value={this.state.roomID} onChange={e => {
+                            this.setState({roomID: e.target.value});
+                        }} /></label>
+                    </div>
+                    <input type="submit" value="Join Room" />
+                </form>
                 <button onClick={this.props.createRoom}>Create Room</button>
-            </form>
-        )
+            </div>
+        );
     }
 }
 

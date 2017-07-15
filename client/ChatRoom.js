@@ -7,7 +7,7 @@ class ChatRoom extends Component {
     }
 
     render () {
-        return <h1>Chat Room</h1>
+        return <h1>Room {this.props.roomID}</h1>
     }
 }
 
