@@ -22,23 +22,21 @@ io.on("connection", (client) => {
         console.log(data);
     });
 
-    client.on("create-room", () => {
+    client.on("create-room", (name) => {
         const roomID = generateID();
         client.join(roomID, () => {
-            const rooms = Object.keys(client.rooms);
-            client.emit("roomCreated", roomID);
+            client.emit("roomCreated", {roomID, name});
         });
     });
 
     client.on("join-room", (data) => {
         client.join(data.roomID, () => {
-            client.emit("roomJoined", data.roomID);
-            io.to(data.roomID).emit("room-entered", data.name + " has joined the room");
+            client.emit("roomJoined", data);
+            io.to(data.roomID).emit("room-entered", data.name);
         });
     });
 
     client.on("messages", (data) => {
-        console.log("messages");
         client.broadcast.emit("broad", data);
     });
 });

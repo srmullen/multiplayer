@@ -20,23 +20,19 @@ class Main extends Component {
             name: ""
         }
 
-        socket.on("roomCreated", (roomID) => {
-            this.setState({roomID});
+        socket.on("roomCreated", (data) => {
+            this.setState(data);
         });
 
-        socket.on("roomJoined", (roomID) => {
-            this.setState({roomID});
-        });
-
-        socket.on("room-entered", (data) => {
-            console.log(data);
+        socket.on("roomJoined", (data) => {
+            this.setState(data);
         });
     }
 
     render () {
         if (this.state.roomID) {
             return (
-                <ChatRoom name={this.state.name} roomID={this.state.roomID} />
+                <ChatRoom name={this.state.name} roomID={this.state.roomID} socket={socket} />
             )
         } else {
             return (
@@ -44,8 +40,8 @@ class Main extends Component {
                     joinRoom={(roomID, name) => {
                         socket.emit("join-room", {roomID, name});
                     }}
-                    createRoom={() => {
-                        socket.emit("create-room");
+                    createRoom={(name) => {
+                        socket.emit("create-room", name);
                     }}
                 />
             );

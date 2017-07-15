@@ -29,7 +29,9 @@ class Login extends Component {
                     </div>
                     <input type="submit" value="Join Room" />
                 </form>
-                <button onClick={this.props.createRoom}>Create Room</button>
+                <button onClick={() => {
+                    this.props.createRoom(this.state.name);
+                }}>Create Room</button>
             </div>
         );
     }

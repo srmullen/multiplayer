@@ -1,3 +1,6 @@
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+
 const Message = ({name, message}) => {
     return <div>{name}: {message}</div>
 }
@@ -10,24 +13,25 @@ class ChatForm extends Component {
             messages: []
         }
 
-        socket.on("broad", (data) => {
+        props.socket.on("broad", (data) => {
             this.setState({messages: this.state.messages.concat(data)});
         });
     }
 
     render () {
-        const messages = this.state.messages.map((message, i) => <Message key={i} name="Sean" message={message} />);
+        const messages = this.state.messages.map((message, i) => {
+            return <Message key={i} name={message.name} message={message.message} />;
+        });
         return (
             <div>
-                <h1>Chat!</h1>
                 <div id="future">{messages}</div>
                 <form id="chat_form" onSubmit={e => {
                     e.preventDefault();
                     const message = this.state.chatInput;
-                    socket.emit("messages", message);
+                    this.props.socket.emit("messages", {name: this.props.name, message});
                     this.setState({
                         chatInput: "",
-                        messages: this.state.messages.concat(message)
+                        messages: this.state.messages.concat({name: this.props.name, message})
                     });
                 }}>
                     <input type="text" value={this.state.chatInput} onChange={e => {
@@ -39,3 +43,11 @@ class ChatForm extends Component {
         );
     }
 };
+
+ChatForm.propTypes = {
+    socket: PropTypes.object.isRequired,
+    name: PropTypes.string.isRequired,
+    roomID: PropTypes.string.isRequired
+};
+
+export default ChatForm;
