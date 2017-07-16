@@ -6,4 +6,6 @@ on mobile devices as well as desktops. So it will use a responsive framework.
 
 TODO
 ----
-- Create chat room
+- Possibly use Redis for storing history.
+- Room in URL
+- Attendee List

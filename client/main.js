@@ -20,32 +20,62 @@ class Main extends Component {
             name: ""
         }
 
-        socket.on("roomCreated", (data) => {
-            this.setState(data);
-        });
-
-        socket.on("roomJoined", (data) => {
-            this.setState(data);
-        });
+        // socket.on("roomCreated", (data) => {
+        //     history.pushState(null, null, "/" + data.roomID);
+        //     this.setState(data);
+        // });
+        //
+        // socket.on("roomJoined", (data) => {
+        //     history.pushState(null, null, "/" + data.roomID);
+        //     this.setState(data);
+        // });
     }
 
     render () {
-        if (this.state.roomID) {
-            return (
-                <ChatRoom name={this.state.name} roomID={this.state.roomID} socket={socket} />
-            )
-        } else {
-            return (
-                <Login
-                    joinRoom={(roomID, name) => {
-                        socket.emit("join-room", {roomID, name});
-                    }}
-                    createRoom={(name) => {
-                        socket.emit("create-room", name);
-                    }}
-                />
-            );
-        }
+        // if (this.state.roomID) {
+        //     return (
+        //         <ChatRoom name={this.state.name} roomID={this.state.roomID} socket={socket} />
+        //     )
+        // } else {
+        //     return (
+        //         <Login
+        //             joinRoom={(roomID, name) => {
+        //                 socket.emit("join-room", {roomID, name});
+        //             }}
+        //             createRoom={(name) => {
+        //                 socket.emit("create-room", name);
+        //             }}
+        //         />
+        //     );
+        // }
+        return (
+            <Router>
+                <div>
+                    <Route exact path="/" component={({history}) => {
+                        return (
+                            <Login
+                                joinRoom={(roomID, name) => {
+                                    history.push("/" + roomID);
+                                    socket.emit("join-room", {roomID, name});
+                                }}
+                                createRoom={(name) => {
+                                    this.setState({name}, () => {
+                                        socket.emit("create-room", name, (data) => {
+                                            history.push("/" + data.roomID);
+                                        });
+                                    })
+                                }}
+                            />
+                        );
+                    }} />
+                    <Route path="/:roomID" component={({match}) => {
+                        return (
+                            <ChatRoom name={this.state.name} roomID={match.params.roomID} socket={socket} />
+                        );
+                    }} />
+                </div>
+            </Router>
+        );
     }
 }
 

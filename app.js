@@ -8,7 +8,7 @@ const server = http.createServer(app);
 const io = socket(server);
 
 app.use(express.static(__dirname + '/dist'));
-app.get("/", (req, res) => {
+app.get("*", (req, res) => {
     res.sendFile(__dirname + "/dist/index.html");
 });
 
@@ -22,11 +22,12 @@ io.on("connection", (client) => {
         console.log(data);
     });
 
-    client.on("create-room", (name) => {
+    client.on("create-room", (name, fn) => {
         const roomID = generateID();
-        client.join(roomID, () => {
-            client.emit("roomCreated", {roomID, name});
-        });
+        // client.join(roomID, () => {
+        //     client.emit("roomCreated", {roomID, name});
+        // });
+        fn({roomID, name});
     });
 
     client.on("join-room", (data) => {
