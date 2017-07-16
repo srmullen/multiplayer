@@ -24,21 +24,23 @@ io.on("connection", (client) => {
 
     client.on("create-room", (name, fn) => {
         const roomID = generateID();
-        // client.join(roomID, () => {
-        //     client.emit("roomCreated", {roomID, name});
-        // });
+        client.join(roomID, () => {
+            client.emit("roomCreated", {roomID, name});
+        });
         fn({roomID, name});
     });
 
-    client.on("join-room", (data) => {
+    client.on("join-room", (data, fn) => {
         client.join(data.roomID, () => {
             client.emit("roomJoined", data);
             io.to(data.roomID).emit("room-entered", data.name);
         });
+        fn(data);
     });
 
     client.on("messages", (data) => {
-        client.broadcast.emit("broad", data);
+        // client.broadcast.emit("broad", data);
+        io.to(data.roomID).emit("broad", data);
     });
 });
 

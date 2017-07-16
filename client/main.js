@@ -19,35 +19,9 @@ class Main extends Component {
             roomID: null,
             name: ""
         }
-
-        // socket.on("roomCreated", (data) => {
-        //     history.pushState(null, null, "/" + data.roomID);
-        //     this.setState(data);
-        // });
-        //
-        // socket.on("roomJoined", (data) => {
-        //     history.pushState(null, null, "/" + data.roomID);
-        //     this.setState(data);
-        // });
     }
 
     render () {
-        // if (this.state.roomID) {
-        //     return (
-        //         <ChatRoom name={this.state.name} roomID={this.state.roomID} socket={socket} />
-        //     )
-        // } else {
-        //     return (
-        //         <Login
-        //             joinRoom={(roomID, name) => {
-        //                 socket.emit("join-room", {roomID, name});
-        //             }}
-        //             createRoom={(name) => {
-        //                 socket.emit("create-room", name);
-        //             }}
-        //         />
-        //     );
-        // }
         return (
             <Router>
                 <div>
@@ -55,8 +29,11 @@ class Main extends Component {
                         return (
                             <Login
                                 joinRoom={(roomID, name) => {
-                                    history.push("/" + roomID);
-                                    socket.emit("join-room", {roomID, name});
+                                    this.setState({name}, () => {
+                                        socket.emit("join-room", {roomID, name}, (data) => {
+                                            history.push("/" + data.roomID);
+                                        });
+                                    });
                                 }}
                                 createRoom={(name) => {
                                     this.setState({name}, () => {

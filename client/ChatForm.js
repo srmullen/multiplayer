@@ -28,10 +28,13 @@ class ChatForm extends Component {
                 <form id="chat_form" onSubmit={e => {
                     e.preventDefault();
                     const message = this.state.chatInput;
-                    this.props.socket.emit("messages", {name: this.props.name, message});
+                    this.props.socket.emit("messages", {
+                        name: this.props.name,
+                        roomID: this.props.roomID,
+                        message
+                    });
                     this.setState({
-                        chatInput: "",
-                        messages: this.state.messages.concat({name: this.props.name, message})
+                        chatInput: ""
                     });
                 }}>
                     <input type="text" value={this.state.chatInput} onChange={e => {
