@@ -41,7 +41,8 @@ class Main extends Component {
                                     });
                                 }}
                                 createRoom={(name) => {
-                                    this.setState({name}, () => {
+                                    const attendees = this.state.attendees.concat({name});
+                                    this.setState({name, attendees}, () => {
                                         socket.emit("create-room", name, (data) => {
                                             history.push("/" + data.roomID);
                                         });
