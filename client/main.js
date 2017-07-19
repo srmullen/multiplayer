@@ -17,8 +17,13 @@ class Main extends Component {
         super(props);
         this.state = {
             roomID: null,
-            name: ""
-        }
+            name: "",
+            attendees: []
+        };
+
+        socket.on("room-entered", (name) => {
+            this.setState({attendees: this.state.attendees.concat({name})});
+        });
     }
 
     render () {
@@ -47,7 +52,12 @@ class Main extends Component {
                     }} />
                     <Route path="/:roomID" component={({match}) => {
                         return (
-                            <ChatRoom name={this.state.name} roomID={match.params.roomID} socket={socket} />
+                            <ChatRoom
+                                name={this.state.name}
+                                roomID={match.params.roomID}
+                                socket={socket}
+                                attendees={this.state.attendees}
+                            />
                         );
                     }} />
                 </div>

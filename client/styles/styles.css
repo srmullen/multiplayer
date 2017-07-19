@@ -9,3 +9,18 @@ body {
     margin: 100px auto 5px auto;
     padding: 20px;
 }
+
+.attendees {
+    background-color: white;
+    border: 1px solid black;
+    float: right;
+    padding: 2%;
+    margin: 1%;
+}
+
+.chat-form {
+    background-color: white;
+    border: 1px solid black;
+    float: left;
+    padding: 2%;
+}

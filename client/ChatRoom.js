@@ -1,14 +1,11 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import ChatForm from "./ChatForm";
+import AttendeeList from "./AttendeeList";
 
 class ChatRoom extends Component {
     constructor (props) {
         super(props);
-
-        props.socket.on("room-entered", (name) => {
-            console.log(`${name} has joined the room.`);
-        });
     }
 
     render () {
@@ -16,6 +13,7 @@ class ChatRoom extends Component {
             <div>
                 <h1>Room {this.props.roomID}</h1>
                 <ChatForm name={this.props.name} socket={this.props.socket} roomID={this.props.roomID} />
+                <AttendeeList attendees={this.props.attendees} />
             </div>
         );
     }
@@ -24,7 +22,8 @@ class ChatRoom extends Component {
 ChatRoom.propTypes = {
     socket: PropTypes.object.isRequired,
     roomID: PropTypes.string.isRequired,
-    name: PropTypes.string
+    attendees: PropTypes.array.isRequired,
+    name: PropTypes.string,
 };
 
 export default ChatRoom;
