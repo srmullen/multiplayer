@@ -8,9 +8,6 @@ const app = express();
 const server = http.createServer(app);
 const io = socket(server);
 
-const me = Person.of({name: "Sean"});
-console.log(me.name);
-
 app.use(express.static(__dirname + '/dist'));
 app.get("*", (req, res) => {
     res.sendFile(__dirname + "/dist/index.html");
@@ -22,10 +19,6 @@ server.listen(4200, () => {
 });
 
 io.on("connection", (client) => {
-    client.on("join", (data) => {
-        console.log(data);
-    });
-
     client.on("create-room", (name, fn) => {
         const roomID = generateID();
         client.join(roomID, () => {
@@ -49,7 +42,6 @@ io.on("connection", (client) => {
     });
 
     client.on("messages", (data) => {
-        // client.broadcast.emit("broad", data);
         io.to(data.roomID).emit("broad", data);
     });
 });

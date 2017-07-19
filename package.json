@@ -11,11 +11,13 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.15.3",
+    "ramda": "^0.24.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
-    "socket.io": "^2.0.3"
+    "socket.io": "^2.0.3",
+    "uuid": "^3.1.0"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

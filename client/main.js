@@ -9,8 +9,8 @@ import ChatRoom from "./ChatRoom";
 import Person from "../entities/Person";
 
 var socket = io.connect('http://127.0.0.1:4200');
-socket.on("connect", (data) => {
-    socket.emit("join", "Hello world from client");
+socket.on("connect", () => {
+    console.log("Connected to Socket");
 });
 
 class Main extends Component {
@@ -18,7 +18,7 @@ class Main extends Component {
         super(props);
         this.state = {
             roomID: null,
-            name: "",
+            self: null,
             attendees: []
         };
 
@@ -35,7 +35,8 @@ class Main extends Component {
                         return (
                             <Login
                                 joinRoom={(roomID, name) => {
-                                    this.setState({name}, () => {
+                                    const self = Person.of({name});
+                                    this.setState({self}, () => {
                                         socket.emit("join-room", {roomID, name}, (data) => {
                                             history.push("/" + data.roomID);
                                         });
@@ -43,7 +44,7 @@ class Main extends Component {
                                 }}
                                 createRoom={(name) => {
                                     const attendees = this.state.attendees.concat(Person.of({name}));
-                                    this.setState({name, attendees}, () => {
+                                    this.setState({self: Person.of({name}), attendees}, () => {
                                         socket.emit("create-room", name, (data) => {
                                             history.push("/" + data.roomID);
                                         });
@@ -52,17 +53,21 @@ class Main extends Component {
                             />
                         );
                     }} />
-                    <Route path="/:roomID" component={({match}) => {
+                    <Route path="/:roomID" component={({match, history}) => {
                         return (
                             <ChatRoom
-                                name={this.state.name}
+                                self={this.state.self}
                                 roomID={match.params.roomID}
                                 socket={socket}
                                 attendees={this.state.attendees}
                                 leaveRoom={() => {
-                                    socket.emit("leave-room", () => {
-                                        console.log("person left room");
-                                        // this.setState({attendees})
+                                    socket.emit("leave-room", {self: this.state.self, roomID: this.state.roomID}, () => {
+                                        history.push("/");
+                                        this.setState({
+                                            roomID: null,
+                                            self: null,
+                                            attendees: []
+                                        });
                                     });
                                 }}
                             />

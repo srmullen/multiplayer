@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import ChatForm from "./ChatForm";
 import AttendeeList from "./AttendeeList";
+import Person from "../entities/Person";
 
 class ChatRoom extends Component {
     constructor (props) {
@@ -13,7 +14,7 @@ class ChatRoom extends Component {
             <div>
                 <h1>Room {this.props.roomID}</h1>
                 <button onClick={this.props.leaveRoom}>Leave</button>
-                <ChatForm name={this.props.name} socket={this.props.socket} roomID={this.props.roomID} />
+                <ChatForm name={this.props.self.name} socket={this.props.socket} roomID={this.props.roomID} />
                 <AttendeeList attendees={this.props.attendees} />
             </div>
         );
@@ -25,7 +26,7 @@ ChatRoom.propTypes = {
     roomID: PropTypes.string.isRequired,
     attendees: PropTypes.array.isRequired,
     leaveRoom: PropTypes.func.isRequired,
-    name: PropTypes.string,
+    self: PropTypes.instanceOf(Person).isRequired
 };
 
 export default ChatRoom;
