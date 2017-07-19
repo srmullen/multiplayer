@@ -6,7 +6,7 @@ import io from "socket.io-client";
 
 import Login from "./Login";
 import ChatRoom from "./ChatRoom";
-import Person from "./entities/Person";
+import Person from "../entities/Person";
 
 var socket = io.connect('http://127.0.0.1:4200');
 socket.on("connect", (data) => {

@@ -7,4 +7,5 @@ Person.of = function (props) {
     return new Person(props);
 }
 
-export default Person;
+// export default Person;
+module.exports = Person;

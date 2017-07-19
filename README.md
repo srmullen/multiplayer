@@ -11,3 +11,4 @@ TODO
 - Get room history.
 - Load previously Joined Attendees.
 - Error if room hasn't been created.
+- React Native

@@ -2,10 +2,14 @@ const path = require("path");
 const express =  require("express");
 const http = require("http");
 const socket = require("socket.io");
+const Person = require("./entities/Person");
 
 const app = express();
 const server = http.createServer(app);
 const io = socket(server);
+
+const me = Person.of({name: "Sean"});
+console.log(me.name);
 
 app.use(express.static(__dirname + '/dist'));
 app.get("*", (req, res) => {
