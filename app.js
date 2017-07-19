@@ -38,6 +38,12 @@ io.on("connection", (client) => {
         fn(data);
     });
 
+    client.on("leave-room", (data, fn) => {
+        client.leave(data.roomID, () => {
+            fn();
+        });
+    });
+
     client.on("messages", (data) => {
         // client.broadcast.emit("broad", data);
         io.to(data.roomID).emit("broad", data);

@@ -6,6 +6,7 @@ import io from "socket.io-client";
 
 import Login from "./Login";
 import ChatRoom from "./ChatRoom";
+import Person from "./entities/Person";
 
 var socket = io.connect('http://127.0.0.1:4200');
 socket.on("connect", (data) => {
@@ -22,7 +23,7 @@ class Main extends Component {
         };
 
         socket.on("room-entered", (name) => {
-            this.setState({attendees: this.state.attendees.concat({name})});
+            this.setState({attendees: this.state.attendees.concat(Person.of({name}))});
         });
     }
 
@@ -41,7 +42,7 @@ class Main extends Component {
                                     });
                                 }}
                                 createRoom={(name) => {
-                                    const attendees = this.state.attendees.concat({name});
+                                    const attendees = this.state.attendees.concat(Person.of({name}));
                                     this.setState({name, attendees}, () => {
                                         socket.emit("create-room", name, (data) => {
                                             history.push("/" + data.roomID);
@@ -58,6 +59,12 @@ class Main extends Component {
                                 roomID={match.params.roomID}
                                 socket={socket}
                                 attendees={this.state.attendees}
+                                leaveRoom={() => {
+                                    socket.emit("leave-room", () => {
+                                        console.log("person left room");
+                                        // this.setState({attendees})
+                                    });
+                                }}
                             />
                         );
                     }} />

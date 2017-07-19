@@ -12,6 +12,7 @@ class ChatRoom extends Component {
         return (
             <div>
                 <h1>Room {this.props.roomID}</h1>
+                <button onClick={this.props.leaveRoom}>Leave</button>
                 <ChatForm name={this.props.name} socket={this.props.socket} roomID={this.props.roomID} />
                 <AttendeeList attendees={this.props.attendees} />
             </div>
@@ -23,6 +24,7 @@ ChatRoom.propTypes = {
     socket: PropTypes.object.isRequired,
     roomID: PropTypes.string.isRequired,
     attendees: PropTypes.array.isRequired,
+    leaveRoom: PropTypes.func.isRequired,
     name: PropTypes.string,
 };
 
