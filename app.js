@@ -29,14 +29,15 @@ io.on("connection", (client) => {
 
     client.on("join-room", (data, fn) => {
         client.join(data.roomID, () => {
-            client.emit("roomJoined", data);
-            io.to(data.roomID).emit("room-entered", data.name);
+            io.to(data.roomID).emit("room-entered", data.self);
         });
         fn(data);
     });
 
     client.on("leave-room", (data, fn) => {
         client.leave(data.roomID, () => {
+            console.log(data.self.name + " left room " + data.roomID);
+            io.to(data.roomID).emit("room-left", data.self);
             fn();
         });
     });

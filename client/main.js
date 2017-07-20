@@ -2,6 +2,7 @@ import "./styles/styles.css";
 import ReactDOM from "react-dom";
 import React, {Component} from "react";
 import {BrowserRouter as Router, Route} from "react-router-dom";
+import R from "ramda";
 import io from "socket.io-client";
 
 import Login from "./Login";
@@ -13,6 +14,8 @@ socket.on("connect", () => {
     console.log("Connected to Socket");
 });
 
+window.R = R;
+
 class Main extends Component {
     constructor (props) {
         super(props);
@@ -22,8 +25,14 @@ class Main extends Component {
             attendees: []
         };
 
-        socket.on("room-entered", (name) => {
-            this.setState({attendees: this.state.attendees.concat(Person.of({name}))});
+        socket.on("room-entered", (person) => {
+            this.setState({attendees: this.state.attendees.concat(Person.of(person))});
+        });
+
+        socket.on("room-left", (person) => {
+            this.setState(previous => {
+                return {attendees: R.reject(attendee => attendee.id === person.id, previous.attendees)};
+            });
         });
     }
 
@@ -37,7 +46,7 @@ class Main extends Component {
                                 joinRoom={(roomID, name) => {
                                     const self = Person.of({name});
                                     this.setState({self}, () => {
-                                        socket.emit("join-room", {roomID, name}, (data) => {
+                                        socket.emit("join-room", {roomID, self}, (data) => {
                                             history.push("/" + data.roomID);
                                         });
                                     });
@@ -61,7 +70,7 @@ class Main extends Component {
                                 socket={socket}
                                 attendees={this.state.attendees}
                                 leaveRoom={() => {
-                                    socket.emit("leave-room", {self: this.state.self, roomID: this.state.roomID}, () => {
+                                    socket.emit("leave-room", {self: this.state.self, roomID: match.params.roomID}, () => {
                                         history.push("/");
                                         this.setState({
                                             roomID: null,
