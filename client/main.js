@@ -36,6 +36,10 @@ class Main extends Component {
         });
     }
 
+    componentDidMount () {
+        console.log("mounted");
+    }
+
     render () {
         return (
             <Router>
@@ -44,33 +48,28 @@ class Main extends Component {
                         return (
                             <Login
                                 joinRoom={(roomID, name) => {
-                                    const self = Person.of({name});
-                                    this.setState({self}, () => {
-                                        socket.emit("join-room", {roomID, self}, (data) => {
-                                            history.push("/" + data.roomID);
-                                        });
-                                    });
+                                    this.joinRoom(roomID, name, history);
                                 }}
                                 createRoom={(name) => {
                                     const attendees = this.state.attendees.concat(Person.of({name}));
-                                    this.setState({self: Person.of({name}), attendees}, () => {
-                                        socket.emit("create-room", name, (data) => {
-                                            history.push("/" + data.roomID);
-                                        });
-                                    })
+                                    socket.emit("create-room", name, (data) => {
+                                        this.joinRoom(data.roomID, name, history);
+                                    });
                                 }}
                             />
                         );
                     }} />
                     <Route path="/:roomID" component={({match, history}) => {
+                        const self = this.state.self;
+                        const attendees = this.state.attendees;
                         return (
                             <ChatRoom
-                                self={this.state.self}
+                                self={self}
                                 roomID={match.params.roomID}
                                 socket={socket}
-                                attendees={this.state.attendees}
+                                attendees={attendees}
                                 leaveRoom={() => {
-                                    socket.emit("leave-room", {self: this.state.self, roomID: match.params.roomID}, () => {
+                                    socket.emit("leave-room", {self: self, roomID: match.params.roomID}, () => {
                                         history.push("/");
                                         this.setState({
                                             roomID: null,
@@ -85,6 +84,15 @@ class Main extends Component {
                 </div>
             </Router>
         );
+    }
+
+    joinRoom (roomID, name, history) {
+        const self = Person.of({name});
+        this.setState({self}, () => {
+            socket.emit("join-room", {roomID, self}, (data) => {
+                history.push("/" + data.roomID);
+            });
+        });
     }
 }
 

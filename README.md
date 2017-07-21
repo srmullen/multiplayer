@@ -6,7 +6,6 @@ on mobile devices as well as desktops. So it will use a responsive framework.
 
 TODO
 ----
-- Leave room.
 - Possibly use Redis for storing history.
 - Get room history.
 - Load previously Joined Attendees.

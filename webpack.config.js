@@ -15,6 +15,7 @@ module.exports = {
     plugins:[
         new DashboardPlugin(),
         new HtmlWebpackPlugin({
+            filename: "_index.html",
             template: "./client/index.html"
         })
     ],
