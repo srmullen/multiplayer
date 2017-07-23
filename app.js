@@ -1,6 +1,7 @@
 const uuid = require("uuid/v1");
 const path = require("path");
 const express =  require("express");
+const bodyParser = require("body-parser");
 const http = require("http");
 const expressSession = require("express-session");
 const socketSession = require("express-socket.io-session");
@@ -12,21 +13,21 @@ const server = http.createServer(app);
 const io = socket(server);
 
 const session = expressSession({
-    secret: uuid(),
-    resave: false,
+    secret: "boopbeepboop",
+    resave: true,
     saveUninitialized: true
 });
 app.use(session);
+io.use(socketSession(session, {
+    autoSave: true
+}));
+app.use(bodyParser.json());
 app.use(express.static(__dirname + '/dist'));
+app.post("/login", (req, res) => {
+    req.session.self = req.body;
+    res.json({message: "Success"});
+});
 app.get("*", (req, res) => {
-    // const sess = req.session;
-    // if (req.session.views) {
-    //     sess.views++;
-    //     console.log(sess.views);
-    // } else {
-    //     sess.views = 1;
-    //     console.log("Welcome to the session");
-    // }
     res.sendFile(__dirname + "/dist/_index.html");
 });
 
@@ -36,6 +37,10 @@ server.listen(4200, () => {
 });
 
 io.on("connection", (client) => {
+    client.on("get-self", (data, fn) => {
+        fn(client.handshake.session.self);
+    });
+
     client.on("create-room", (name, fn) => {
         const roomID = generateID();
         client.join(roomID);
@@ -43,6 +48,7 @@ io.on("connection", (client) => {
     });
 
     client.on("join-room", (data, fn) => {
+        client.handshake.session.self = data.self;
         client.join(data.roomID, () => {
             io.to(data.roomID).emit("room-entered", data.self);
         });
@@ -51,7 +57,6 @@ io.on("connection", (client) => {
 
     client.on("leave-room", (data, fn) => {
         client.leave(data.roomID, () => {
-            console.log(data.self.name + " left room " + data.roomID);
             io.to(data.roomID).emit("room-left", data.self);
             fn();
         });
@@ -60,6 +65,7 @@ io.on("connection", (client) => {
     client.on("messages", (data) => {
         io.to(data.roomID).emit("broad", data);
     });
+
 });
 
 function generateID () {

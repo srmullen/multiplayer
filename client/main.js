@@ -4,14 +4,16 @@ import React, {Component} from "react";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import R from "ramda";
 import io from "socket.io-client";
+import $ from "jquery";
 
 import Login from "./Login";
 import ChatRoom from "./ChatRoom";
 import Person from "../entities/Person";
 
-var socket = io.connect('http://127.0.0.1:4200');
-socket.on("connect", () => {
-    console.log("Connected to Socket");
+// const socket = io.connect('http://127.0.0.1:4200');
+const socket = io();
+socket.on("connect", (me) => {
+    console.log("Socket connected");
 });
 
 window.R = R;
@@ -37,7 +39,12 @@ class Main extends Component {
     }
 
     componentDidMount () {
-        console.log("mounted");
+        socket.emit("get-self", {}, (self) => {
+            console.log(self);
+            if (self) {
+                this.setState({self: Person.of(self)});
+            }
+        });
     }
 
     render () {
@@ -89,6 +96,13 @@ class Main extends Component {
     joinRoom (roomID, name, history) {
         const self = Person.of({name});
         this.setState({self}, () => {
+            $.ajax({
+                url: "/login",
+                method: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify({...self})
+            });
             socket.emit("join-room", {roomID, self}, (data) => {
                 history.push("/" + data.roomID);
             });
@@ -96,4 +110,4 @@ class Main extends Component {
     }
 }
 
-ReactDOM.render(<Main />, document.getElementById("root"));
+ReactDOM.render(<Main self={self} />, document.getElementById("root"));
