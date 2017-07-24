@@ -6,7 +6,9 @@ const http = require("http");
 const expressSession = require("express-session");
 const socketSession = require("express-socket.io-session");
 const socket = require("socket.io");
+
 const Person = require("./entities/Person");
+const Room = require("./entities/Room");
 
 const app = express();
 const server = http.createServer(app);
@@ -36,21 +38,26 @@ server.listen(4200, () => {
     console.log(`Server started on port 4200.`);
 });
 
+// Temporary store for room info.
+const rooms = {};
+
 io.on("connection", (client) => {
     client.on("get-self", (data, fn) => {
         fn(client.handshake.session.self);
     });
 
     client.on("create-room", (name, fn) => {
-        const roomID = generateID();
-        client.join(roomID);
-        fn({roomID, name});
+        const room = Room.of();
+        client.join(room.id);
+        rooms[room.id] = room;
+        fn({roomID: room.id, name});
     });
 
     client.on("join-room", (data, fn) => {
         client.handshake.session.self = data.self;
         client.join(data.roomID, () => {
             io.to(data.roomID).emit("room-entered", data.self);
+            rooms[data.roomID].attendees.push(data.self);
         });
         fn(data);
     });
@@ -67,7 +74,3 @@ io.on("connection", (client) => {
     });
 
 });
-
-function generateID () {
-    return Math.random().toString(36).substr(2, 9);
-}
