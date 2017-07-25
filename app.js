@@ -41,9 +41,21 @@ server.listen(4200, () => {
 // Temporary store for room info.
 const rooms = {};
 
+// Errors
+const ROOM_DOES_NOT_EXIST = "Room does not exist";
+
 io.on("connection", (client) => {
     client.on("get-self", (data, fn) => {
         fn(client.handshake.session.self);
+    });
+
+    client.on("get-room", (roomID, fn) => {
+        const room = rooms[roomID];
+        if (room) {
+            fn({room});
+        } else {
+            fn({error: ROOM_DOES_NOT_EXIST});
+        }
     });
 
     client.on("create-room", (name, fn) => {
@@ -55,11 +67,15 @@ io.on("connection", (client) => {
 
     client.on("join-room", (data, fn) => {
         client.handshake.session.self = data.self;
-        client.join(data.roomID, () => {
-            io.to(data.roomID).emit("room-entered", data.self);
-            rooms[data.roomID].attendees.push(data.self);
-        });
-        fn(data);
+        if (rooms[data.roomID]) {
+            client.join(data.roomID, () => {
+                io.to(data.roomID).emit("room-entered", data.self);
+                rooms[data.roomID].attendees.push(data.self);
+            });
+            fn(data);
+        } else {
+            fn({error: ROOM_DOES_NOT_EXIST});
+        }
     });
 
     client.on("leave-room", (data, fn) => {

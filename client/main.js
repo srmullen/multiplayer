@@ -40,11 +40,18 @@ class Main extends Component {
 
     componentDidMount () {
         socket.emit("get-self", {}, (self) => {
-            console.log(self);
             if (self) {
                 this.setState({self: Person.of(self)});
             }
         });
+        const roomID = window.location.pathname.slice(1);
+        if (roomID) {
+            socket.emit("get-room", roomID, (data) => {
+                if (data.error) {
+                    console.log(data.error);
+                }
+            });
+        }
     }
 
     render () {
@@ -113,6 +120,7 @@ class Main extends Component {
                 success: () => {
                     this.setState({self}, () => {
                         socket.emit("join-room", {roomID, self}, (data) => {
+                            console.log(data.error);
                             return resolve(data.roomID);
                         });
                     });

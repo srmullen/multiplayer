@@ -9,6 +9,6 @@ TODO
 - Possibly use Redis for storing history.
 - Get room history.
 - Load previously Joined Attendees.
-- Error if room hasn't been created.
+- Render error if room does not exist.
 - React Native
 - Redux?
