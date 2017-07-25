@@ -15,11 +15,6 @@ class ChatRoom extends Component {
                 <div>
                     <h1>Room {this.props.roomID}</h1>
                     <button onClick={this.props.leaveRoom}>Leave</button>
-                    <button onClick={() => {
-                        this.props.socket.emit("get-self", {}, function (user) {
-                            console.log(user);
-                        });
-                    }}>Get self</button>
                     <ChatForm name={this.props.self.name} socket={this.props.socket} roomID={this.props.roomID} />
                     <AttendeeList attendees={this.props.attendees} />
                 </div>

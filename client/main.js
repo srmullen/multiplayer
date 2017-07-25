@@ -55,12 +55,20 @@ class Main extends Component {
                         return (
                             <Login
                                 joinRoom={(roomID, name) => {
-                                    this.joinRoom(roomID, name, history);
+                                    this.joinRoom(roomID, name).then(roomID => {
+                                        history.push("/" + roomID);
+                                    }).catch(e => {
+                                        console.log(e);
+                                    });
                                 }}
                                 createRoom={(name) => {
                                     const attendees = this.state.attendees.concat(Person.of({name}));
                                     socket.emit("create-room", name, (data) => {
-                                        this.joinRoom(data.roomID, name, history);
+                                        this.joinRoom(data.roomID, name).then(roomID => {
+                                            history.push("/" + roomID);
+                                        }).catch(e => {
+                                            console.log(e);
+                                        });
                                     });
                                 }}
                             />
@@ -93,18 +101,25 @@ class Main extends Component {
         );
     }
 
-    joinRoom (roomID, name, history) {
+    joinRoom (roomID, name) {
         const self = Person.of({name});
-        this.setState({self}, () => {
+        return new Promise((resolve, reject) => {
             $.ajax({
                 url: "/login",
                 method: "POST",
                 dataType: "json",
                 contentType: "application/json",
-                data: JSON.stringify({...self})
-            });
-            socket.emit("join-room", {roomID, self}, (data) => {
-                history.push("/" + data.roomID);
+                data: JSON.stringify({...self}),
+                success: () => {
+                    this.setState({self}, () => {
+                        socket.emit("join-room", {roomID, self}, (data) => {
+                            return resolve(data.roomID);
+                        });
+                    });
+                },
+                error: (err) => {
+                    reject(err);
+                }
             });
         });
     }
