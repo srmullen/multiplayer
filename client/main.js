@@ -49,6 +49,7 @@ class Main extends Component {
             socket.emit("get-room", roomID, (data) => {
                 if (data.error) {
                     console.log(data.error);
+                    window.location.replace("/");
                 }
             });
         }
@@ -120,7 +121,6 @@ class Main extends Component {
                 success: () => {
                     this.setState({self}, () => {
                         socket.emit("join-room", {roomID, self}, (data) => {
-                            console.log(data.error);
                             return resolve(data.roomID);
                         });
                     });
@@ -133,4 +133,4 @@ class Main extends Component {
     }
 }
 
-ReactDOM.render(<Main self={self} />, document.getElementById("root"));
+ReactDOM.render(<Main />, document.getElementById("root"));

@@ -7,8 +7,9 @@ on mobile devices as well as desktops. So it will use a responsive framework.
 TODO
 ----
 - Possibly use Redis for storing history.
+- Make sure sessions are stored properly before prod.
 - Get room history.
 - Load previously Joined Attendees.
-- Render error if room does not exist.
+- Loading page.
 - React Native
 - Redux?
