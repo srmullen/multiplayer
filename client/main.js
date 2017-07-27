@@ -65,8 +65,9 @@ class Main extends Component {
                         return (
                             <Login
                                 joinRoom={(roomID, name) => {
-                                    this.joinRoom(roomID, name).then(room => {
+                                    this.joinRoom(roomID, name).then(({room, self}) => {
                                         this.setState({
+                                            self,
                                             roomID: room.id,
                                             attendees: room.attendees
                                         }, () => {
@@ -79,8 +80,9 @@ class Main extends Component {
                                 createRoom={(name) => {
                                     const attendees = this.state.attendees.concat(Person.of({name}));
                                     socket.emit("create-room", name, (data) => {
-                                        this.joinRoom(data.roomID, name).then(room => {
+                                        this.joinRoom(data.roomID, name).then(({room, self}) => {
                                             this.setState({
+                                                self,
                                                 roomID: room.id,
                                                 attendees: room.attendees
                                             }, () => {
@@ -131,10 +133,8 @@ class Main extends Component {
                 contentType: "application/json",
                 data: JSON.stringify({...self}),
                 success: () => {
-                    this.setState({self}, () => {
-                        socket.emit("join-room", {roomID, self}, (data) => {
-                            return resolve(data.room);
-                        });
+                    socket.emit("join-room", {roomID, self}, (data) => {
+                        return resolve({room: data.room, self});
                     });
                 },
                 error: (err) => {
