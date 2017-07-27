@@ -67,12 +67,13 @@ io.on("connection", (client) => {
 
     client.on("join-room", (data, fn) => {
         client.handshake.session.self = data.self;
-        if (rooms[data.roomID]) {
+        const room = rooms[data.roomID];
+        if (room) {
             client.join(data.roomID, () => {
                 io.to(data.roomID).emit("room-entered", data.self);
                 rooms[data.roomID].attendees.push(data.self);
+                fn({room});
             });
-            fn(data);
         } else {
             fn({error: ROOM_DOES_NOT_EXIST});
         }

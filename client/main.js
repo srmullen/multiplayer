@@ -50,6 +50,8 @@ class Main extends Component {
                 if (data.error) {
                     console.log(data.error);
                     window.location.replace("/");
+                } else {
+                    this.setState({attendees: data.room.attendees});
                 }
             });
         }
@@ -63,8 +65,13 @@ class Main extends Component {
                         return (
                             <Login
                                 joinRoom={(roomID, name) => {
-                                    this.joinRoom(roomID, name).then(roomID => {
-                                        history.push("/" + roomID);
+                                    this.joinRoom(roomID, name).then(room => {
+                                        this.setState({
+                                            roomID: room.id,
+                                            attendees: room.attendees
+                                        }, () => {
+                                            history.push("/" + room.id);
+                                        });
                                     }).catch(e => {
                                         console.log(e);
                                     });
@@ -72,8 +79,13 @@ class Main extends Component {
                                 createRoom={(name) => {
                                     const attendees = this.state.attendees.concat(Person.of({name}));
                                     socket.emit("create-room", name, (data) => {
-                                        this.joinRoom(data.roomID, name).then(roomID => {
-                                            history.push("/" + roomID);
+                                        this.joinRoom(data.roomID, name).then(room => {
+                                            this.setState({
+                                                roomID: room.id,
+                                                attendees: room.attendees
+                                            }, () => {
+                                                history.push("/" + room.id);
+                                            });
                                         }).catch(e => {
                                             console.log(e);
                                         });
@@ -121,7 +133,7 @@ class Main extends Component {
                 success: () => {
                     this.setState({self}, () => {
                         socket.emit("join-room", {roomID, self}, (data) => {
-                            return resolve(data.roomID);
+                            return resolve(data.room);
                         });
                     });
                 },
