@@ -8,7 +8,8 @@ TODO
 ----
 - Possibly use Redis for storing history.
 - Make sure sessions are stored properly before prod.
-- Get room history.
 - Loading page.
+- Layout across devices.
 - React Native
+- GraphQL
 - Redux?

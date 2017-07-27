@@ -6,7 +6,8 @@ class Login extends Component {
         super(props);
         this.state = {
             name: "",
-            roomID: ""
+            roomID: "",
+            joinRoomDisabled: true
         };
     }
 
@@ -24,10 +25,13 @@ class Login extends Component {
                     </div>
                     <div>
                         <label>Room ID: <input type="text" value={this.state.roomID} onChange={e => {
-                            this.setState({roomID: e.target.value});
+                            this.setState({
+                                roomID: e.target.value,
+                                joinRoomDisabled: !e.target.value.length
+                            });
                         }} /></label>
                     </div>
-                    <input type="submit" value="Join Room" />
+                    <input type="submit" value="Join Room" disabled={this.state.joinRoomDisabled} />
                 </form>
                 <button onClick={() => {
                     this.props.createRoom(this.state.name);

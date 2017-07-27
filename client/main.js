@@ -86,7 +86,7 @@ class Main extends Component {
                                             history.push("/" + room.id);
                                         });
                                     }).catch(e => {
-                                        console.log(e);
+                                        console.error(e);
                                     });
                                 }}
                                 createRoom={(name) => {
@@ -99,7 +99,7 @@ class Main extends Component {
                                                 history.push("/" + room.id);
                                             });
                                         }).catch(e => {
-                                            console.log(e);
+                                            console.error(e);
                                         });
                                     });
                                 }}
@@ -140,8 +140,12 @@ class Main extends Component {
                 contentType: "application/json",
                 data: JSON.stringify({...self}),
                 success: () => {
-                    socket.emit("join-room", {roomID, self}, (data) => {
-                        return resolve({room: Room.of(data.room), self});
+                    socket.emit("join-room", {roomID, self}, ({room, error}) => {
+                        if (error) {
+                            return reject(error);
+                        } else {
+                            return resolve({room: Room.of(room), self});
+                        }
                     });
                 },
                 error: (err) => {
