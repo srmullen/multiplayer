@@ -81,13 +81,23 @@ io.on("connection", (client) => {
 
     client.on("leave-room", (data, fn) => {
         client.leave(data.roomID, () => {
+            const room = rooms[data.roomID];
+            if (room) {
+                rooms[data.roomID] = Room.leave(room, data.self);
+            }
             io.to(data.roomID).emit("room-left", data.self);
             fn();
         });
     });
 
-    client.on("messages", (data) => {
-        io.to(data.roomID).emit("broad", data);
+    client.on("messages", (data, fn) => {
+        const room = rooms[data.roomID];
+        if (room) {
+            room.messages.push(data);
+            io.to(data.roomID).emit("broad", data);
+        } else {
+            fn({error: ROOM_DOES_NOT_EXIST})
+        }
     });
 
 });

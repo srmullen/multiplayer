@@ -9,17 +9,12 @@ class ChatForm extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            chatInput: "",
-            messages: []
+            chatInput: ""
         }
-
-        props.socket.on("broad", (data) => {
-            this.setState({messages: this.state.messages.concat(data)});
-        });
     }
 
     render () {
-        const messages = this.state.messages.map((message, i) => {
+        const messages = this.props.messages.map((message, i) => {
             return <Message key={i} name={message.name} message={message.message} />;
         });
         return (
@@ -32,6 +27,8 @@ class ChatForm extends Component {
                         name: this.props.name,
                         roomID: this.props.roomID,
                         message
+                    }, (data) => {
+                        console.log(data);
                     });
                     this.setState({
                         chatInput: ""

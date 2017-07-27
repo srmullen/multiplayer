@@ -9,6 +9,7 @@ import $ from "jquery";
 import Login from "./Login";
 import ChatRoom from "./ChatRoom";
 import Person from "../entities/Person";
+import Room from "../entities/Room";
 
 // const socket = io.connect('http://127.0.0.1:4200');
 const socket = io();
@@ -22,19 +23,31 @@ class Main extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            roomID: null,
+            room: null,
             self: null,
-            attendees: []
         };
 
+        socket.on("broad", (data) => {
+            const messages = this.state.room.messages.concat(data);
+            this.setState({room: Room.of(Object.assign({}, this.state.room, {messages}))});
+        });
+
         socket.on("room-entered", (person) => {
-            this.setState({attendees: this.state.attendees.concat(Person.of(person))});
+            if (this.state.room) {
+                this.setState(previous => {
+                    const room = Room.enter(previous.room, Person.of(person));
+                    return {room};
+                });
+            }
         });
 
         socket.on("room-left", (person) => {
-            this.setState(previous => {
-                return {attendees: R.reject(attendee => attendee.id === person.id, previous.attendees)};
-            });
+            if (this.state.room) {
+                this.setState(previous => {
+                    const room = Room.leave(previous.room, Person.of(person));
+                    return {room};
+                });
+            }
         });
     }
 
@@ -51,7 +64,7 @@ class Main extends Component {
                     console.log(data.error);
                     window.location.replace("/");
                 } else {
-                    this.setState({attendees: data.room.attendees});
+                    this.setState({room: Room.of(data.room)});
                 }
             });
         }
@@ -68,8 +81,7 @@ class Main extends Component {
                                     this.joinRoom(roomID, name).then(({room, self}) => {
                                         this.setState({
                                             self,
-                                            roomID: room.id,
-                                            attendees: room.attendees
+                                            room
                                         }, () => {
                                             history.push("/" + room.id);
                                         });
@@ -78,13 +90,11 @@ class Main extends Component {
                                     });
                                 }}
                                 createRoom={(name) => {
-                                    const attendees = this.state.attendees.concat(Person.of({name}));
                                     socket.emit("create-room", name, (data) => {
                                         this.joinRoom(data.roomID, name).then(({room, self}) => {
                                             this.setState({
                                                 self,
-                                                roomID: room.id,
-                                                attendees: room.attendees
+                                                room
                                             }, () => {
                                                 history.push("/" + room.id);
                                             });
@@ -97,21 +107,18 @@ class Main extends Component {
                         );
                     }} />
                     <Route path="/:roomID" component={({match, history}) => {
-                        const self = this.state.self;
-                        const attendees = this.state.attendees;
                         return (
                             <ChatRoom
-                                self={self}
+                                self={this.state.self}
                                 roomID={match.params.roomID}
                                 socket={socket}
-                                attendees={attendees}
+                                room={this.state.room}
                                 leaveRoom={() => {
-                                    socket.emit("leave-room", {self: self, roomID: match.params.roomID}, () => {
+                                    socket.emit("leave-room", {self: this.state.self, roomID: match.params.roomID}, () => {
                                         history.push("/");
                                         this.setState({
-                                            roomID: null,
+                                            room: null,
                                             self: null,
-                                            attendees: []
                                         });
                                     });
                                 }}
@@ -134,7 +141,7 @@ class Main extends Component {
                 data: JSON.stringify({...self}),
                 success: () => {
                     socket.emit("join-room", {roomID, self}, (data) => {
-                        return resolve({room: data.room, self});
+                        return resolve({room: Room.of(data.room), self});
                     });
                 },
                 error: (err) => {
