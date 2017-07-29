@@ -6,9 +6,16 @@ const http = require("http");
 const expressSession = require("express-session");
 const socketSession = require("express-socket.io-session");
 const socket = require("socket.io");
+const redisClient = require("redis");
+const exitHook = require("exit-hook");
 
 const Person = require("./entities/Person");
 const Room = require("./entities/Room");
+
+const redis = redisClient.createClient();
+redis.on("error", (err) => {
+    console.error(err);
+});
 
 const app = express();
 const server = http.createServer(app);
@@ -38,9 +45,6 @@ server.listen(4200, () => {
     console.log(`Server started on port 4200.`);
 });
 
-// Temporary store for room info.
-const rooms = {};
-
 // Errors
 const ROOM_DOES_NOT_EXIST = "Room does not exist";
 
@@ -50,54 +54,73 @@ io.on("connection", (client) => {
     });
 
     client.on("get-room", (roomID, fn) => {
-        const room = rooms[roomID];
-        if (room) {
-            fn({room});
-        } else {
-            fn({error: ROOM_DOES_NOT_EXIST});
-        }
+        redis.hget("rooms", roomID, (err, roomJSON) => {
+            if (err) {
+                console.log(err);
+            }
+
+            if (roomJSON) {
+                const room = JSON.parse(roomJSON);
+                fn({room});
+            } else {
+                fn({error: ROOM_DOES_NOT_EXIST});
+            }
+        });
     });
 
     client.on("create-room", (name, fn) => {
         const room = Room.of();
+        redis.hset("rooms", room.id, JSON.stringify(room));
         client.join(room.id);
-        rooms[room.id] = room;
         fn({roomID: room.id, name});
     });
 
     client.on("join-room", (data, fn) => {
         client.handshake.session.self = data.self;
-        const room = rooms[data.roomID];
-        if (room) {
-            client.join(data.roomID, () => {
-                io.to(data.roomID).emit("room-entered", data.self);
-                rooms[data.roomID].attendees.push(data.self);
-                fn({room});
-            });
-        } else {
-            fn({error: ROOM_DOES_NOT_EXIST});
-        }
+        redis.hget("rooms", data.roomID, (err, roomJSON) => {
+            if (roomJSON) {
+                client.join(data.roomID, () => {
+                    const room = JSON.parse(roomJSON);
+                    room.attendees.push(data.self)
+                    redis.hset("rooms", data.roomID, JSON.stringify(room));
+                    io.to(data.roomID).emit("room-entered", data.self);
+                    fn({room});
+                });
+            } else {
+                fn({error: ROOM_DOES_NOT_EXIST});
+            }
+        });
     });
 
     client.on("leave-room", (data, fn) => {
         client.leave(data.roomID, () => {
-            const room = rooms[data.roomID];
-            if (room) {
-                rooms[data.roomID] = Room.leave(room, data.self);
-            }
-            io.to(data.roomID).emit("room-left", data.self);
-            fn();
+            redis.hget("rooms", data.roomID, (err, roomJSON) => {
+                if (roomJSON) {
+                    const room = JSON.parse(roomJSON);
+                    redis.hset("rooms", data.roomID, JSON.stringify(Room.leave(room, data.self)));
+                }
+                io.to(data.roomID).emit("room-left", data.self);
+                fn();
+            });
         });
     });
 
     client.on("messages", (data, fn) => {
-        const room = rooms[data.roomID];
-        if (room) {
-            room.messages.push(data);
-            io.to(data.roomID).emit("broad", data);
-        } else {
-            fn({error: ROOM_DOES_NOT_EXIST})
-        }
+        redis.hget("rooms", data.roomID, (err, roomJSON) => {
+            if (roomJSON) {
+                const room = JSON.parse(roomJSON);
+                room.messages.push(data);
+                redis.hset("rooms", data.roomID, JSON.stringify(room));
+                io.to(data.roomID).emit("broad", data);
+            } else {
+                fn({error: ROOM_DOES_NOT_EXIST})
+            }
+        });
     });
+});
 
+exitHook(function () {
+    console.log("Shutting down!");
+    redis.flushdb();
+    redis.quit();
 });
