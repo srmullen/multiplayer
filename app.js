@@ -47,8 +47,8 @@ app.get("*", (req, res) => {
     res.sendFile(__dirname + "/dist/_index.html");
 });
 
-// const PORT = process.env.PORT || 4200;
-const PORT = 8081;
+const PORT = process.env.PORT || 4200;
+// const PORT = 8081;
 server.listen(PORT, () => {
     console.log(`Server started on port ${PORT}.`);
 });
