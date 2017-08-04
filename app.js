@@ -17,10 +17,10 @@ const Room = require("./entities/Room");
 //     console.error(err);
 // });
 const redis = {
-    on () {console.log("redis on")}
-    hget () {console.log("redis hget")}
-    hset () {console.log("redis hset")}
-    flushdb () {console.log("redis flushdb")}
+    on () {console.log("redis on")},
+    hget () {console.log("redis hget")},
+    hset () {console.log("redis hset")},
+    flushdb () {console.log("redis flushdb")},
     quit () {console.log("redis qui")}
 }
 
@@ -47,9 +47,10 @@ app.get("*", (req, res) => {
     res.sendFile(__dirname + "/dist/_index.html");
 });
 
-const PORT = process.env.PORT || 4200;
+// const PORT = process.env.PORT || 4200;
+const PORT = 8081;
 server.listen(PORT, () => {
-    console.log(`Server started on port 4200.`);
+    console.log(`Server started on port ${PORT}.`);
 });
 
 // Errors
