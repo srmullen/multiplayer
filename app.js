@@ -12,10 +12,17 @@ const exitHook = require("exit-hook");
 const Person = require("./entities/Person");
 const Room = require("./entities/Room");
 
-const redis = redisClient.createClient();
-redis.on("error", (err) => {
-    console.error(err);
-});
+// const redis = redisClient.createClient();
+// redis.on("error", (err) => {
+//     console.error(err);
+// });
+const redis = {
+    on () {console.log("redis on")}
+    hget () {console.log("redis hget")}
+    hset () {console.log("redis hset")}
+    flushdb () {console.log("redis flushdb")}
+    quit () {console.log("redis qui")}
+}
 
 const app = express();
 const server = http.createServer(app);
@@ -40,8 +47,8 @@ app.get("*", (req, res) => {
     res.sendFile(__dirname + "/dist/_index.html");
 });
 
-const PORT = 4200;
-server.listen(4200, () => {
+const PORT = process.env.PORT || 4200;
+server.listen(PORT, () => {
     console.log(`Server started on port 4200.`);
 });
 
