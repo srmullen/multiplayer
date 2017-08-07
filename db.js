@@ -1,28 +1,10 @@
 const redisClient = require("redis");
 
-// const db = redisClient.createClient();
-// db.on("error", (err) => {
-//     console.error(err);
-// });
-
-let db = {};
-
-const redis = {
-    hget (hash, key, cb) {
-        const obj = db[hash] || {};
-        cb(undefined, obj[key]);
-        return "ok";
-    },
-    hset (hash, key, data) {
-        const obj = db[hash] || {};
-        obj[key] = data;
-        db[hash] = obj;
-        return "ok";
-    },
-    flushdb () {
-        db = {};
-    },
-    quit () {console.log("redis qui")}
-};
+const REDIS_ENDPOINT = process.env.REDIS_ENDPOINT ? `//${process.env.REDIS_ENDPOINT}` : undefined;
+console.log(`Redis Endpoint: ${REDIS_ENDPOINT}`);
+const redis = redisClient.createClient(REDIS_ENDPOINT);
+redis.on("error", (err) => {
+    console.error(err);
+});
 
 module.exports = redis;

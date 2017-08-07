@@ -14,3 +14,7 @@ TODO
 - React Native
 - GraphQL
 - Redux?
+
+Issues
+------
+- Appears that socket is falling back to long-polling in aws.
