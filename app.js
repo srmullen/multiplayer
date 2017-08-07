@@ -6,23 +6,11 @@ const http = require("http");
 const expressSession = require("express-session");
 const socketSession = require("express-socket.io-session");
 const socket = require("socket.io");
-const redisClient = require("redis");
 const exitHook = require("exit-hook");
 
 const Person = require("./entities/Person");
 const Room = require("./entities/Room");
-
-// const redis = redisClient.createClient();
-// redis.on("error", (err) => {
-//     console.error(err);
-// });
-const redis = {
-    on () {console.log("redis on")},
-    hget () {console.log("redis hget")},
-    hset () {console.log("redis hset")},
-    flushdb () {console.log("redis flushdb")},
-    quit () {console.log("redis qui")}
-}
+const redis = require("./db");
 
 const app = express();
 const server = http.createServer(app);
