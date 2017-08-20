@@ -11,7 +11,6 @@ import ChatRoom from "./ChatRoom";
 import Person from "../entities/Person";
 import Room from "../entities/Room";
 
-// const socket = io.connect('http://127.0.0.1:4200');
 const socket = io();
 socket.on("connect", (me) => {
     console.log("Socket connected");
