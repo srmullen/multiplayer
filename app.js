@@ -11,6 +11,7 @@ const exitHook = require("exit-hook");
 const Person = require("./entities/Person");
 const Room = require("./entities/Room");
 const redis = require("./db");
+const {ROOM_EXPIRATION_TIME} = require("./constants");
 
 const app = express();
 const server = http.createServer(app);
@@ -49,7 +50,7 @@ io.on("connection", (client) => {
     });
 
     client.on("get-room", (roomID, fn) => {
-        redis.hget("rooms", roomID, (err, roomJSON) => {
+        redis.get(`room:${roomID}`, (err, roomJSON) => {
             if (err) {
                 console.log(err);
             }
@@ -65,19 +66,19 @@ io.on("connection", (client) => {
 
     client.on("create-room", (name, fn) => {
         const room = Room.of();
-        redis.hset("rooms", room.id, JSON.stringify(room));
+        redis.set(`room:${room.id}`, JSON.stringify(room), "EX", ROOM_EXPIRATION_TIME);
         client.join(room.id);
         fn({roomID: room.id, name});
     });
 
     client.on("join-room", (data, fn) => {
         client.handshake.session.self = data.self;
-        redis.hget("rooms", data.roomID, (err, roomJSON) => {
+        redis.get(`room:${data.roomID}`, (err, roomJSON) => {
             if (roomJSON) {
                 client.join(data.roomID, () => {
                     const room = JSON.parse(roomJSON);
                     room.attendees.push(data.self)
-                    redis.hset("rooms", data.roomID, JSON.stringify(room));
+                    redis.set(`room:${data.roomID}`, JSON.stringify(room), "EX", ROOM_EXPIRATION_TIME);
                     io.to(data.roomID).emit("room-entered", data.self);
                     fn({room});
                 });
@@ -89,10 +90,10 @@ io.on("connection", (client) => {
 
     client.on("leave-room", (data, fn) => {
         client.leave(data.roomID, () => {
-            redis.hget("rooms", data.roomID, (err, roomJSON) => {
+            redis.get(`room:${data.roomID}`, (err, roomJSON) => {
                 if (roomJSON) {
                     const room = JSON.parse(roomJSON);
-                    redis.hset("rooms", data.roomID, JSON.stringify(Room.leave(room, data.self)));
+                    redis.set(`room:${data.roomID}`, JSON.stringify(Room.leave(room, data.self)), "EX", ROOM_EXPIRATION_TIME);
                 }
                 io.to(data.roomID).emit("room-left", data.self);
                 fn();
@@ -101,11 +102,11 @@ io.on("connection", (client) => {
     });
 
     client.on("messages", (data, fn) => {
-        redis.hget("rooms", data.roomID, (err, roomJSON) => {
+        redis.get(`room:${data.roomID}`, (err, roomJSON) => {
             if (roomJSON) {
                 const room = JSON.parse(roomJSON);
                 room.messages.push(data);
-                redis.hset("rooms", data.roomID, JSON.stringify(room));
+                redis.set(`room:${data.roomID}`, JSON.stringify(room), "EX", ROOM_EXPIRATION_TIME);
                 io.to(data.roomID).emit("broad", data);
             } else {
                 fn({error: ROOM_DOES_NOT_EXIST})
