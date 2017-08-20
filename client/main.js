@@ -130,7 +130,7 @@ class Main extends Component {
     }
 
     joinRoom (roomID, name) {
-        const self = Person.of({name});
+        const self = Person.of({name: name ? name : undefined});
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: "/login",
