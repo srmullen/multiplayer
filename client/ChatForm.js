@@ -13,14 +13,18 @@ class ChatForm extends Component {
         }
     }
 
+    componentDidMount () {
+        this.refs.chatInput.focus();
+    }
+
     render () {
         const messages = this.props.messages.map((message, i) => {
             return <Message key={i} name={message.name} message={message.message} />;
         });
         return (
             <div className="ba bg-white pa2 fl">
-                <div id="future">{messages}</div>
-                <form id="chat_form" onSubmit={e => {
+                <div>{messages}</div>
+                <form onSubmit={e => {
                     e.preventDefault();
                     const message = this.state.chatInput;
                     this.props.socket.emit("messages", {
@@ -34,7 +38,7 @@ class ChatForm extends Component {
                         chatInput: ""
                     });
                 }}>
-                    <input type="text" value={this.state.chatInput} onChange={e => {
+                    <input ref="chatInput" type="text" value={this.state.chatInput} onChange={e => {
                         this.setState({chatInput: e.target.value});
                     }} />
                     <input type="submit" value="Send" />
