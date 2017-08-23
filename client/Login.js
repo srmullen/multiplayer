@@ -13,29 +13,35 @@ class Login extends Component {
 
     render () {
         return (
-            <div className="bg-white ba w-50 pa3 mh-auto mv5">
-                <form onSubmit={e => {
-                    e.preventDefault();
-                    this.props.joinRoom(this.state.roomID, this.state.name);
-                }}>
+            <div className="pa4 w-50 measure center">
+                <form
+                    onSubmit={e => {
+                        e.preventDefault();
+                        this.props.joinRoom(this.state.roomID, this.state.name);
+                    }}>
                     <div>
-                        <label>Name: <input type="text" value={this.state.name} onChange={e => {
+                        <label className="db lh-copy" htmlFor="name-input">Name</label>
+                        <input id="name-input" type="text" value={this.state.name} onChange={e => {
                             this.setState({name: e.target.value});
-                        }} /></label>
+                        }} />
                     </div>
                     <div>
-                        <label>Room ID: <input type="text" value={this.state.roomID} onChange={e => {
+                        <label className="db lh-copy" htmlFor="room-input">Room ID</label>
+                        <input id="room-input" type="text" value={this.state.roomID} onChange={e => {
                             this.setState({
                                 roomID: e.target.value,
                                 joinRoomDisabled: !e.target.value.length
                             });
-                        }} /></label>
+                        }} />
                     </div>
-                    <input type="submit" value="Join Room" disabled={this.state.joinRoomDisabled} />
+                    <div className="lh-copy mt3">
+                        <input className="ma1" type="submit" value="Join Room" disabled={this.state.joinRoomDisabled} />
+                        <button className="ma1" onClick={(e) => {
+                            e.preventDefault();
+                            this.props.createRoom(this.state.name);
+                        }}>Create Room</button>
+                    </div>
                 </form>
-                <button onClick={() => {
-                    this.props.createRoom(this.state.name);
-                }}>Create Room</button>
             </div>
         );
     }

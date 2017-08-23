@@ -69,7 +69,10 @@ class Main extends Component {
     render () {
         return (
             <Router>
-                <div className="">
+                <div>
+                    <header className="bg-black-80">
+                        <div className="white pa2 f3">Chat</div>
+                    </header>
                     <Route exact path="/" component={({history}) => {
                         return (
                             <Login

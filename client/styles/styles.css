@@ -1,8 +1,17 @@
-body {
-    background-color: #f7fce0;
-}
+body {}
 
 .mh-auto {
     margin-left: auto;
     margin-right: auto;
+}
+
+.b-none {border: none;}
+
+.bt-none {border-top: none;}
+.br-none {border-right: none;}
+.bb-none {border-bottom: none;}
+.bl-none {border-left: none;}
+
+input[type=text]:focus {
+    outline: none;
 }

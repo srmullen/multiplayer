@@ -1,9 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-
-const Message = ({name, message}) => {
-    return <div>{name}: {message}</div>
-}
+import Messages from "./Messages";
 
 class ChatForm extends Component {
     constructor (props) {
@@ -18,12 +15,9 @@ class ChatForm extends Component {
     }
 
     render () {
-        const messages = this.props.messages.map((message, i) => {
-            return <Message key={i} name={message.name} message={message.message} />;
-        });
         return (
-            <div className="ba bg-white pa2 fl">
-                <div>{messages}</div>
+            <div className="bg-white pa2 w-60 mh-auto f4">
+                <Messages messages={this.props.messages} />
                 <form onSubmit={e => {
                     e.preventDefault();
                     const message = this.state.chatInput;
@@ -38,10 +32,13 @@ class ChatForm extends Component {
                         chatInput: ""
                     });
                 }}>
-                    <input ref="chatInput" type="text" value={this.state.chatInput} onChange={e => {
-                        this.setState({chatInput: e.target.value});
-                    }} />
-                    <input type="submit" value="Send" />
+                    <input
+                        className="input-reset bt-none br-none bl-none w-100 bb black-70"
+                        ref="chatInput" type="text" value={this.state.chatInput}
+                        onChange={e => {
+                            this.setState({chatInput: e.target.value});
+                        }}
+                    />
                 </form>
             </div>
         );

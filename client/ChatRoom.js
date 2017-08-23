@@ -13,9 +13,8 @@ class ChatRoom extends Component {
     render () {
         if (this.props.self && this.props.room) {
             return (
-                <div className="ma2">
-                    <h1>Room {this.props.roomID}</h1>
-                    <button onClick={this.props.leaveRoom}>Leave</button>
+                <div className="ma2 black-70">
+                    <h1 className="w-60 mh-auto f1 lh-solid">Room {this.props.roomID}</h1>
                     <ChatForm
                         name={this.props.self.name}
                         socket={this.props.socket}
@@ -23,6 +22,7 @@ class ChatRoom extends Component {
                         messages={this.props.room.messages}
                     />
                     <AttendeeList attendees={this.props.room.attendees} />
+                    <button onClick={this.props.leaveRoom}>Leave</button>
                 </div>
             );
         } else {
