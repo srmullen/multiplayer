@@ -7,6 +7,7 @@ const expressSession = require("express-session");
 const socketSession = require("express-socket.io-session");
 const socket = require("socket.io");
 const exitHook = require("exit-hook");
+const {find, propEq} = require("ramda");
 
 const Person = require("./entities/Person");
 const Room = require("./entities/Room");
@@ -45,19 +46,21 @@ server.listen(PORT, () => {
 const ROOM_DOES_NOT_EXIST = "Room does not exist";
 
 io.on("connection", (client) => {
-    client.on("get-self", (data, fn) => {
-        fn(client.handshake.session.self);
-    });
-
-    client.on("get-room", (roomID, fn) => {
+    client.on("reenter-room", (roomID, fn) => {
         redis.get(`room:${roomID}`, (err, roomJSON) => {
             if (err) {
                 console.log(err);
             }
 
-            if (roomJSON) {
+            if (roomJSON && client.handshake.session.self) {
+                const self = client.handshake.session.self;
                 const room = JSON.parse(roomJSON);
-                fn({room});
+                if (find(propEq("id", self.id), room.attendees)) {
+                    client.join(roomID);
+                    fn({room, self});
+                } else {
+                    fn({error: ROOM_DOES_NOT_EXIST});
+                }
             } else {
                 fn({error: ROOM_DOES_NOT_EXIST});
             }

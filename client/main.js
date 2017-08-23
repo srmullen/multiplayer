@@ -50,19 +50,17 @@ class Main extends Component {
     }
 
     componentDidMount () {
-        socket.emit("get-self", {}, (self) => {
-            if (self) {
-                this.setState({self: Person.of(self)});
-            }
-        });
         const roomID = window.location.pathname.slice(1);
         if (roomID) {
-            socket.emit("get-room", roomID, (data) => {
+            socket.emit("reenter-room", roomID, (data) => {
                 if (data.error) {
                     console.log(data.error);
                     window.location.replace("/");
                 } else {
-                    this.setState({room: Room.of(data.room)});
+                    this.setState({
+                        room: Room.of(data.room),
+                        self: Person.of(data.self)
+                    });
                 }
             });
         }

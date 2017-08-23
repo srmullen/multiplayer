@@ -7,7 +7,6 @@ on mobile devices as well as desktops. So it will use a responsive framework.
 TODO
 ----
 - Better Redis data structuring
-- Expire rooms
 - Make sure sessions are stored properly before prod.
 - Loading page.
 - Layout across devices.
@@ -17,4 +16,3 @@ TODO
 
 Issues
 ------
-- Appears that socket is falling back to long-polling in aws.
