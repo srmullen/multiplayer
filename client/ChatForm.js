@@ -18,7 +18,7 @@ class ChatForm extends Component {
             return <Message key={i} name={message.name} message={message.message} />;
         });
         return (
-            <div className="chat-form">
+            <div className="ba bg-white pa2 fl">
                 <div id="future">{messages}</div>
                 <form id="chat_form" onSubmit={e => {
                     e.preventDefault();

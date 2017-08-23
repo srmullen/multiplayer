@@ -1,3 +1,4 @@
+import "tachyons";
 import "./styles/styles.css";
 import ReactDOM from "react-dom";
 import React, {Component} from "react";
@@ -15,8 +16,6 @@ const socket = io();
 socket.on("connect", (me) => {
     console.log("Socket connected");
 });
-
-window.R = R;
 
 class Main extends Component {
     constructor (props) {
@@ -72,7 +71,7 @@ class Main extends Component {
     render () {
         return (
             <Router>
-                <div>
+                <div className="">
                     <Route exact path="/" component={({history}) => {
                         return (
                             <Login

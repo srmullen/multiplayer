@@ -10,7 +10,7 @@ const Attendee = ({name}) => {
 const AttendeeList = (props) => {
     const attendees = props.attendees.map((attendee, i) => <Attendee key={i} {...attendee} />);
     return (
-        <ul className="attendees">
+        <ul className="bg-white fr ma2 pa4 ba">
             {attendees}
         </ul>
     );

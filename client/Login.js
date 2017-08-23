@@ -13,7 +13,7 @@ class Login extends Component {
 
     render () {
         return (
-            <div className="login-form">
+            <div className="bg-white ba w-50 pa3 mh-auto mv5">
                 <form onSubmit={e => {
                     e.preventDefault();
                     this.props.joinRoom(this.state.roomID, this.state.name);

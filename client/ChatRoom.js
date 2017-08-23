@@ -13,7 +13,7 @@ class ChatRoom extends Component {
     render () {
         if (this.props.self && this.props.room) {
             return (
-                <div>
+                <div className="ma2">
                     <h1>Room {this.props.roomID}</h1>
                     <button onClick={this.props.leaveRoom}>Leave</button>
                     <ChatForm
