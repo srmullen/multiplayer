@@ -19,28 +19,44 @@ class Login extends Component {
                         e.preventDefault();
                         this.props.joinRoom(this.state.roomID, this.state.name);
                     }}>
-                    <div>
-                        <label className="db lh-copy" htmlFor="name-input">Name</label>
-                        <input id="name-input" type="text" value={this.state.name} onChange={e => {
-                            this.setState({name: e.target.value});
-                        }} />
-                    </div>
-                    <div>
-                        <label className="db lh-copy" htmlFor="room-input">Room ID</label>
-                        <input id="room-input" type="text" value={this.state.roomID} onChange={e => {
-                            this.setState({
-                                roomID: e.target.value,
-                                joinRoomDisabled: !e.target.value.length
-                            });
-                        }} />
-                    </div>
-                    <div className="lh-copy mt3">
-                        <input className="ma1" type="submit" value="Join Room" disabled={this.state.joinRoomDisabled} />
-                        <button className="ma1" onClick={(e) => {
-                            e.preventDefault();
-                            this.props.createRoom(this.state.name);
-                        }}>Create Room</button>
-                    </div>
+                    <fieldset className="ba b--transparent">
+                        <div>
+                            <label className="db lh-copy" htmlFor="name-input">Name</label>
+                            <input
+                                className="input-reset pa2 ba w-100"
+                                id="name-input" type="text"
+                                value={this.state.name} onChange={e => {
+                                    this.setState({name: e.target.value});
+                                }} />
+                        </div>
+                        <div className="mt3">
+                            <label className="db lh-copy" htmlFor="room-input">Room ID</label>
+                            <input
+                                className="input-reset pa2 ba w-100"
+                                id="room-input" type="text"
+                                value={this.state.roomID} onChange={e => {
+                                    this.setState({
+                                        roomID: e.target.value,
+                                        joinRoomDisabled: !e.target.value.length
+                                    });
+                                }} />
+                        </div>
+                        <div className="lh-copy mt3">
+                            <input
+                                className="input-reset ba b--black-80 pa2 bg-transparent ma2 ml0 hover-bg-black hover--white hover"
+                                type="submit"
+                                value="Join Room"
+                                disabled={this.state.joinRoomDisabled} />
+                            <button
+                                className="input-reset ba b--black-80 pa2 bg-transparent ma2 hover-bg-black hover--white hover"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    this.props.createRoom(this.state.name);
+                                }}>
+                                Create Room
+                            </button>
+                        </div>
+                    </fieldset>
                 </form>
             </div>
         );

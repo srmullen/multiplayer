@@ -15,3 +15,23 @@ body {}
 input[type=text]:focus {
     outline: none;
 }
+
+.hover-bg-black:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transition: background-color 0.2s ease-in;
+}
+
+.hover--white:hover {
+    color: white;
+    transition: background-color 0.2s ease-in;
+}
+
+.hover-bg-black:disabled:hover {
+    color: rgba(0, 0, 0, 0.2) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+    transition: color 0.2s ease-in, border-color 0.2s ease-in;
+}
+
+.hover--white:disabled:hover {
+    background-color: white !important;
+}
