@@ -16,7 +16,7 @@ class ChatForm extends Component {
 
     render () {
         return (
-            <div className="bg-white pa2 w-60 mh-auto f4">
+            <div className="bg-white pa2 f4">
                 <Messages messages={this.props.messages} />
                 <form onSubmit={e => {
                     e.preventDefault();
@@ -33,7 +33,7 @@ class ChatForm extends Component {
                     });
                 }}>
                     <input
-                        className="input-reset bt-none br-none bl-none w-100 bb black-70"
+                        className="input-reset bt-none br-none bl-none w-100 bb black-70 pv1"
                         ref="chatInput" type="text" value={this.state.chatInput}
                         onChange={e => {
                             this.setState({chatInput: e.target.value});

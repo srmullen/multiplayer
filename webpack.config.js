@@ -19,6 +19,12 @@ module.exports = {
             template: "./client/index.html"
         })
     ],
+    resolve: {
+        modules: ["client", "node_modules"],
+        alias: {
+            entities: path.resolve(__dirname, "entities")
+        }
+    },
     module: {
         loaders: [{
             test: /\.css$/,
