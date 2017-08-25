@@ -19,7 +19,7 @@ const Attendee = ({name, leaveRoom, isSelf}) => {
 const AttendeeList = (props) => {
     const attendees = props.attendees.reduce((acc, attendee, i) => {
         const isSelf = attendee.id === props.self.id;
-        const el = (<Attendee key={i} {...attendee} isSelf={isSelf} />);
+        const el = (<Attendee key={i} {...attendee} leaveRoom={props.leaveRoom} isSelf={isSelf} />);
         if (isSelf) {
             return [el, ...acc];
         } else {
