@@ -12,13 +12,14 @@ Messages: List
 
 TODO
 ----
-- Better Redis data structuring
 - Make sure sessions are stored properly before prod.
 - Loading page.
 - Layout across devices.
 - React Native
 - GraphQL
 - Redux?
+- Better Logging
+- Explicit Chat room expire time known to the whole room. Controlled by the Host.
 
 Issues
 ------

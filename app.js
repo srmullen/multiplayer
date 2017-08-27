@@ -47,25 +47,31 @@ const ROOM_DOES_NOT_EXIST = "Room does not exist";
 
 io.on("connection", (client) => {
     client.on("reenter-room", (roomID, fn) => {
-        redis.multi()
-            .get(`room:${roomID}`)
-            .sismember(`attendees:${roomID}`, JSON.stringify(client.handshake.session.self), (err, val) => {})
-            .smembers(`attendees:${roomID}`)
-            .exec((err, [roomJSON, isInRoom, attendees]) => {
-                if (err) {
-                    console.log(err);
-                }
+        if (client.handshake.session.self) {
+            redis.multi()
+                .get(`room:${roomID}`)
+                .sismember(`attendees:${roomID}`, JSON.stringify(client.handshake.session.self), (err, val) => {})
+                .smembers(`attendees:${roomID}`)
+                .lrange(`messages:${roomID}`, -100, -1)
+                .exec((err, [roomJSON, isInRoom, attendees, messages]) => {
+                    if (err) {
+                        console.log(err);
+                    }
 
-                if (roomJSON && isInRoom) {
-                    const self = client.handshake.session.self;
-                    const room = JSON.parse(roomJSON);
-                    room.attendees = attendees.map(JSON.parse);
-                    client.join(roomID);
-                    fn({room, self});
-                } else {
-                    fn({error: ROOM_DOES_NOT_EXIST});
-                }
-            });
+                    if (roomJSON && isInRoom) {
+                        const self = client.handshake.session.self;
+                        const room = JSON.parse(roomJSON);
+                        room.attendees = attendees.map(JSON.parse);
+                        room.messages = messages.map(JSON.parse);
+                        client.join(roomID);
+                        fn({room, self});
+                    } else {
+                        fn({error: ROOM_DOES_NOT_EXIST});
+                    }
+                });
+        } else {
+            fn({error: ROOM_DOES_NOT_EXIST});
+        }
     });
 
     client.on("create-room", (name, fn) => {
@@ -84,10 +90,11 @@ io.on("connection", (client) => {
                     redis.multi()
                         .sadd(`attendees:${data.roomID}`, JSON.stringify(data.self))
                         .smembers(`attendees:${data.roomID}`)
+                        .lrange(`messages:${data.roomID}`, -100, -1)
                         .expire(`attendees:${data.roomID}`, ROOM_EXPIRATION_TIME)
                         .expire(`room:${data.roomID}`, ROOM_EXPIRATION_TIME)
-                        .exec((err, [sadd, attendees]) => {
-                            console.log(attendees);
+                        .expire(`messages:${data.roomID}`, ROOM_EXPIRATION_TIME)
+                        .exec((err, [sadd, attendees, messages]) => {
                             if (err) {
                                 console.error(err);
                                 return;
@@ -95,6 +102,7 @@ io.on("connection", (client) => {
 
                             io.to(data.roomID).emit("room-entered", data.self);
                             room.attendees = attendees.map(JSON.parse);
+                            room.messages = messages.map(JSON.parse);
                             fn({room});
                         });
                 });
@@ -119,16 +127,22 @@ io.on("connection", (client) => {
     });
 
     client.on("messages", (data, fn) => {
-        redis.get(`room:${data.roomID}`, (err, roomJSON) => {
-            if (roomJSON) {
-                const room = JSON.parse(roomJSON);
-                room.messages.push(data);
-                redis.set(`room:${data.roomID}`, JSON.stringify(room), "EX", ROOM_EXPIRATION_TIME);
-                io.to(data.roomID).emit("broad", data);
-            } else {
-                fn({error: ROOM_DOES_NOT_EXIST})
-            }
-        });
+        redis.multi()
+            .get(`room:${data.roomID}`)
+            .rpush(`messages:${data.roomID}`, JSON.stringify(data))
+            .expire(`room:${data.roomID}`, ROOM_EXPIRATION_TIME)
+            .expire(`messages:${data.roomID}`, ROOM_EXPIRATION_TIME)
+            .exec((err, [roomJSON]) => {
+                if (err) {
+                    cosole.error(err);
+                }
+
+                if (roomJSON) {
+                    io.to(data.roomID).emit("broad", data);
+                } else {
+                    fn({error: ROOM_DOES_NOT_EXIST})
+                }
+            });
     });
 });
 
