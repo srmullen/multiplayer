@@ -47,24 +47,25 @@ const ROOM_DOES_NOT_EXIST = "Room does not exist";
 
 io.on("connection", (client) => {
     client.on("reenter-room", (roomID, fn) => {
-        redis.get(`room:${roomID}`, (err, roomJSON) => {
-            if (err) {
-                console.log(err);
-            }
+        redis.multi()
+            .get(`room:${roomID}`)
+            .sismember(`attendees:${roomID}`, JSON.stringify(client.handshake.session.self), (err, val) => {})
+            .smembers(`attendees:${roomID}`)
+            .exec((err, [roomJSON, isInRoom, attendees]) => {
+                if (err) {
+                    console.log(err);
+                }
 
-            if (roomJSON && client.handshake.session.self) {
-                const self = client.handshake.session.self;
-                const room = JSON.parse(roomJSON);
-                if (find(propEq("id", self.id), room.attendees)) {
+                if (roomJSON && isInRoom) {
+                    const self = client.handshake.session.self;
+                    const room = JSON.parse(roomJSON);
+                    room.attendees = attendees.map(JSON.parse);
                     client.join(roomID);
                     fn({room, self});
                 } else {
                     fn({error: ROOM_DOES_NOT_EXIST});
                 }
-            } else {
-                fn({error: ROOM_DOES_NOT_EXIST});
-            }
-        });
+            });
     });
 
     client.on("create-room", (name, fn) => {
@@ -80,10 +81,22 @@ io.on("connection", (client) => {
             if (roomJSON) {
                 client.join(data.roomID, () => {
                     const room = JSON.parse(roomJSON);
-                    room.attendees.push(data.self)
-                    redis.set(`room:${data.roomID}`, JSON.stringify(room), "EX", ROOM_EXPIRATION_TIME);
-                    io.to(data.roomID).emit("room-entered", data.self);
-                    fn({room});
+                    redis.multi()
+                        .sadd(`attendees:${data.roomID}`, JSON.stringify(data.self))
+                        .smembers(`attendees:${data.roomID}`)
+                        .expire(`attendees:${data.roomID}`, ROOM_EXPIRATION_TIME)
+                        .expire(`room:${data.roomID}`, ROOM_EXPIRATION_TIME)
+                        .exec((err, [sadd, attendees]) => {
+                            console.log(attendees);
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+
+                            io.to(data.roomID).emit("room-entered", data.self);
+                            room.attendees = attendees.map(JSON.parse);
+                            fn({room});
+                        });
                 });
             } else {
                 fn({error: ROOM_DOES_NOT_EXIST});

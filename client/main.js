@@ -9,8 +9,8 @@ import $ from "jquery";
 
 import Login from "./Login";
 import ChatRoom from "./ChatRoom";
-import Person from "../entities/Person";
-import Room from "../entities/Room";
+import Person from "entities/Person";
+import Room from "entities/Room";
 
 const socket = io();
 socket.on("connect", (me) => {

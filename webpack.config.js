@@ -22,7 +22,7 @@ module.exports = {
     resolve: {
         modules: ["client", "node_modules"],
         alias: {
-            entities: path.resolve(__dirname, "entities")
+            entities: path.resolve(__dirname, "client/entities")
         }
     },
     module: {

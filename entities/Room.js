@@ -2,7 +2,9 @@ const R = require("ramda");
 
 const Room = function ({id=generateID(), attendees=[], messages=[]}) {
     this.id = id;
+    // Set
     this.attendees = attendees;
+    // List
     this.messages = messages
 };
 
