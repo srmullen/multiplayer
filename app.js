@@ -106,11 +106,12 @@ io.on("connection", (client) => {
 
     client.on("leave-room", (data, fn) => {
         client.leave(data.roomID, () => {
-            redis.get(`room:${data.roomID}`, (err, roomJSON) => {
-                if (roomJSON) {
-                    const room = JSON.parse(roomJSON);
-                    redis.set(`room:${data.roomID}`, JSON.stringify(Room.leave(room, data.self)), "EX", ROOM_EXPIRATION_TIME);
+            redis.srem(`attendees:${data.roomID}`, JSON.stringify(data.self), (err, wasRemoved) => {
+                if (err) {
+                    console.error(err);
+                    return;
                 }
+
                 io.to(data.roomID).emit("room-left", data.self);
                 fn();
             });
