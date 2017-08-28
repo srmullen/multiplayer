@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import Messages from "./Messages";
+import Messages from "components/Messages";
 
 class ChatForm extends Component {
     constructor (props) {

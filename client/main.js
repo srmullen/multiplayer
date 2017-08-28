@@ -7,8 +7,8 @@ import R from "ramda";
 import io from "socket.io-client";
 import $ from "jquery";
 
-import Login from "./Login";
-import ChatRoom from "./ChatRoom";
+import Login from "components/Login";
+import ChatRoom from "components/ChatRoom";
 import Person from "entities/Person";
 import Room from "entities/Room";
 import moment from "moment";

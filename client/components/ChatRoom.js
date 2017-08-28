@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
-import ChatForm from "./ChatForm";
-import AttendeeList from "./AttendeeList";
-import Countdown from "./Countdown";
+import ChatForm from "components/ChatForm";
+import AttendeeList from "components/AttendeeList";
+import Countdown from "components/Countdown";
 import Person from "entities/Person";
 import Room from "entities/Room";
 
