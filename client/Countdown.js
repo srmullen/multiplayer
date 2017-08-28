@@ -45,7 +45,8 @@ class Countdown extends Component {
 
 function formatMilliseconds (milliseconds) {
     var m = moment.duration(milliseconds, "ms");
-    return `${m.minutes()}:${m.seconds()}`;
+    const seconds = m.seconds();
+    return `${m.minutes()}:${seconds < 10 ? "0" + seconds : seconds}`;
 }
 
 Countdown.propTypes = {
