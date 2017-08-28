@@ -7,18 +7,14 @@ import Person from "entities/Person";
 import Room from "entities/Room";
 
 class ChatRoom extends Component {
-    constructor (props) {
-        super(props);
-    }
-
     render () {
         if (this.props.self && this.props.room) {
             return (
                 <div className="ma2 black-70">
                     <div className="fl w-two-thirds ph4">
                         <div className="center lh-title">
-                            <h1 className="f1 fl">Room {this.props.roomID}</h1>
-                            <div className="fr">
+                            <h1 className="f1 dib">Room {this.props.roomID}</h1>
+                            <div className="fr dib ma4">
                                 <Countdown expireAt={this.props.room.createdAt + 20 * 60 * 1000} />
                             </div>
                         </div>
