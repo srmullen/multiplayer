@@ -11,6 +11,9 @@ import Login from "./Login";
 import ChatRoom from "./ChatRoom";
 import Person from "entities/Person";
 import Room from "entities/Room";
+import moment from "moment";
+
+window.moment = moment;
 
 const socket = io();
 socket.on("connect", (me) => {

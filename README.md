@@ -19,7 +19,9 @@ TODO
 - GraphQL
 - Redux?
 - Better Logging
-- Explicit Chat room expire time known to the whole room. Controlled by the Host.
+- Explicit Chat room expire time known to the whole room.
+- Room Host.
+- Babel class fields and static properties transform.
 
 Issues
 ------

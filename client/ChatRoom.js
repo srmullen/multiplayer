@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import ChatForm from "./ChatForm";
 import AttendeeList from "./AttendeeList";
+import Countdown from "./Countdown";
 import Person from "entities/Person";
 import Room from "entities/Room";
 
@@ -15,7 +16,12 @@ class ChatRoom extends Component {
             return (
                 <div className="ma2 black-70">
                     <div className="fl w-two-thirds ph4">
-                        <h1 className="center f1 lh-solid">Room {this.props.roomID}</h1>
+                        <div className="center lh-title">
+                            <h1 className="f1 fl">Room {this.props.roomID}</h1>
+                            <div className="fr">
+                                <Countdown expireAt={this.props.room.createdAt + 20 * 60 * 1000} />
+                            </div>
+                        </div>
                         <ChatForm
                             name={this.props.self.name}
                             socket={this.props.socket}

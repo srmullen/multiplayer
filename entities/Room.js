@@ -1,7 +1,8 @@
 const R = require("ramda");
 
-const Room = function ({id=generateID(), attendees=[], messages=[]}) {
+const Room = function ({id=generateID(), attendees=[], messages=[], createdAt=getTime()}) {
     this.id = id;
+    this.createdAt = createdAt;
     // Set
     this.attendees = attendees;
     // List
@@ -26,6 +27,10 @@ Room.leave = function (room, person) {
 
 function generateID () {
     return Math.random().toString(36).substr(2, 9);
+}
+
+function getTime () {
+    return  new Date().getTime();
 }
 
 module.exports = Room;
