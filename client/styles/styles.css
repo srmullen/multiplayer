@@ -21,6 +21,11 @@ input[type=text]:focus {
     transition: background-color 0.2s ease-in;
 }
 
+.hover--white:focus {
+    color: white;
+    transition: background-color 0.2s ease-in;
+}
+
 .hover-bg-black:disabled:hover {
     color: rgba(0, 0, 0, 0.2) !important;
     border-color: rgba(0, 0, 0, 0.2) !important;
