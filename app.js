@@ -126,6 +126,15 @@ io.on("connection", (client) => {
         });
     });
 
+    client.on("destroy-room", (data, fn) => {
+        redis.del(`room:${data.roomID}`, `attendees:${data.roomID}`, `messages:${data.roomID}`, (err, deleted) => {
+            client.leave(data.roomID, () => {
+                fn();
+                io.to(data.roomID).emit("room-destroyed");
+            });
+        });
+    });
+
     client.on("messages", (data, fn) => {
         redis.multi()
             .get(`room:${data.roomID}`)

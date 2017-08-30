@@ -11,9 +11,6 @@ import Login from "components/Login";
 import ChatRoom from "components/ChatRoom";
 import Person from "entities/Person";
 import Room from "entities/Room";
-import moment from "moment";
-
-window.moment = moment;
 
 const socket = io();
 socket.on("connect", (me) => {
@@ -115,8 +112,18 @@ class Main extends Component {
                                 roomID={match.params.roomID}
                                 socket={socket}
                                 room={this.state.room}
+                                history={history}
                                 leaveRoom={() => {
                                     socket.emit("leave-room", {self: this.state.self, roomID: match.params.roomID}, () => {
+                                        history.push("/");
+                                        this.setState({
+                                            room: null,
+                                            self: null,
+                                        });
+                                    });
+                                }}
+                                destroyRoom={() => {
+                                    socket.emit("destroy-room", {roomID: this.state.room.id}, () => {
                                         history.push("/");
                                         this.setState({
                                             room: null,
