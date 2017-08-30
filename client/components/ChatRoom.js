@@ -5,6 +5,7 @@ import AttendeeList from "components/AttendeeList";
 import Countdown from "components/Countdown";
 import Person from "entities/Person";
 import Room from "entities/Room";
+import {ROOM_EXPIRATION_TIME} from "../../constants"
 
 class ChatRoom extends Component {
     constructor (props) {
@@ -27,7 +28,10 @@ class ChatRoom extends Component {
                         <div className="center lh-title">
                             <h1 className="f1 dib">Room {this.props.roomID}</h1>
                             <div className="fr dib ma4">
-                                <Countdown expireAt={this.props.room.createdAt + 20 * 60 * 1000} />
+                                <Countdown
+                                    expireAt={this.props.room.createdAt + ROOM_EXPIRATION_TIME}
+                                    onTimeout={this.props.destroyRoom}
+                                />
                                 <button
                                     className="input-reset ba b--black-20 black-70 pa1 bg-transparent mh3 hover-bg-black hover--white hover f6 fr"
                                     onClick={this.props.destroyRoom}>

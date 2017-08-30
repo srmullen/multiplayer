@@ -20,7 +20,6 @@ TODO
 - Redux?
 - Better Logging
 - Room Host.
-- Destroy room on timeout.
 
 Issues
 ------

@@ -25,6 +25,7 @@ class Countdown extends Component {
             const time = this.props.expireAt - new Date().getTime();
             if (time <= 0) {
                 stopTimer(interval);
+                this.props.onTimeout();
             } else {
                 this.setState({time});
             }
