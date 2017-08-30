@@ -13,15 +13,17 @@ class ChatRoom extends Component {
 
         props.socket.on("room-destroyed", () => {
             props.history.push("/");
-            // this.setState({
-            //     room: null,
-            //     self: null,
-            // });
+            this.setState((previous) => ({
+                room: Room.destroy(previous.room),
+                self: null
+            }));
         });
     }
 
     render () {
-        if (this.props.self && this.props.room) {
+        if (this.props.room && this.props.room.destroyed) {
+            return (<div>Room Destroyed</div>);
+        } else if (this.props.self && this.props.room) {
             return (
                 <div className="ma2 black-70">
                     <div className="fl w-two-thirds ph4">
@@ -56,7 +58,7 @@ class ChatRoom extends Component {
                 </div>
             );
         } else {
-            return (<div>Getting Self</div>);
+            return (<div>Loading</div>);
         }
     }
 }

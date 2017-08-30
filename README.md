@@ -20,6 +20,13 @@ TODO
 - Redux?
 - Better Logging
 - Room Host.
+- Dev and prod profiles
 
 Issues
 ------
+
+Games
+-----
+- Connect four style game.
+- Determine who's who type party game with AI players. Can be played with two or more players.
+    AI players will make it possible that a large group of people isn't needed to play.

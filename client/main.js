@@ -125,10 +125,10 @@ class Main extends Component {
                                 destroyRoom={() => {
                                     socket.emit("destroy-room", {roomID: this.state.room.id}, () => {
                                         history.push("/");
-                                        this.setState({
-                                            room: null,
-                                            self: null,
-                                        });
+                                        this.setState((previous) => ({
+                                            room: Room.destroy(previous.room),
+                                            self: null
+                                        }));
                                     });
                                 }}
                             />

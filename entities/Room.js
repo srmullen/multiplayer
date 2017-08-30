@@ -1,8 +1,9 @@
 const R = require("ramda");
 
-const Room = function ({id=generateID(), attendees=[], messages=[], createdAt=getTime()}) {
+const Room = function ({id=generateID(), attendees=[], messages=[], createdAt=getTime(), destroyed=false}) {
     this.id = id;
     this.createdAt = createdAt;
+    this.destroyed = destroyed;
     // Set
     this.attendees = attendees;
     // List
@@ -23,6 +24,10 @@ Room.leave = function (room, person) {
     return Room.of(Object.assign({}, room, {
         attendees: R.reject(attendee => attendee.id === person.id, room.attendees)
     }));
+}
+
+Room.destroy = function (room) {
+    return Room.of(Object.assign({}, room, {destroyed: true}));
 }
 
 function generateID () {
