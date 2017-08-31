@@ -4,9 +4,10 @@
   "description": "Multi player mobile game framework",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dashboard -- webpack --config webpack.config.js --watch",
+    "dev": "webpack-dashboard -- webpack --config webpack.dev.config.js --watch",
     "debug": "cross-env DEBUG=express-socket.io-session* node ./app.js",
     "redis": "redis-server",
+    "build": "webpack --config webpack.prod.config.js",
     "start": "node ./app.js"
   },
   "author": "Sean Mullen",
