@@ -13,13 +13,13 @@ class Login extends Component {
 
     render () {
         return (
-            <div className="pa4 w-50 measure center">
+            <div className="pa4 w-100 measure-ns dt center">
                 <form
                     onSubmit={e => {
                         e.preventDefault();
                         this.props.joinRoom(this.state.roomID, this.state.name);
                     }}>
-                    <fieldset className="ba b--transparent">
+                    <fieldset className="ba b--transparent v-mid ph3">
                         <div>
                             <label className="db lh-copy" htmlFor="name-input">Name</label>
                             <input

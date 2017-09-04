@@ -19,7 +19,7 @@ const server = http.createServer(app);
 const io = socket(server);
 
 const session = expressSession({
-    secret: "boopbeepboop",
+    secret: uuid(),
     resave: true,
     saveUninitialized: true
 });

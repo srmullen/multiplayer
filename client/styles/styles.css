@@ -16,6 +16,11 @@ input[type=text]:focus {
     transition: background-color 0.2s ease-in;
 }
 
+.hover-bg-white:hover {
+    background-color: white;
+    transition: background-color 0.2s ease-in;
+}
+
 .hover--white:hover {
     color: white;
     transition: background-color 0.2s ease-in;
@@ -23,6 +28,11 @@ input[type=text]:focus {
 
 .hover--white:focus {
     color: white;
+    transition: background-color 0.2s ease-in;
+}
+
+.hover--black:hover {
+    color: rgba(0, 0, 0, 0.8);
     transition: background-color 0.2s ease-in;
 }
 
@@ -34,4 +44,16 @@ input[type=text]:focus {
 
 .hover--white:disabled:hover {
     background-color: white !important;
+}
+
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+.icon-users {
+  width: 1.125em;
 }

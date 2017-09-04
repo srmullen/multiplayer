@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
+import Responsive from "react-responsive";
 import ChatForm from "components/ChatForm";
 import AttendeeList from "components/AttendeeList";
 import Countdown from "components/Countdown";
@@ -48,13 +49,15 @@ class ChatRoom extends Component {
                             messages={this.props.room.messages}
                         />
                     </div>
-                    <div className="fr w-third">
-                        <AttendeeList
-                            self={this.props.self}
-                            leaveRoom={this.props.leaveRoom}
-                            attendees={this.props.room.attendees}
-                        />
-                    </div>
+                    <Responsive minWidth={1000}>
+                        <div className="fr w-third">
+                            <AttendeeList
+                                self={this.props.self}
+                                leaveRoom={this.props.leaveRoom}
+                                attendees={this.props.room.attendees}
+                            />
+                        </div>
+                    </Responsive>
                 </div>
             );
         } else {

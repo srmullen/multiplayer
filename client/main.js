@@ -9,6 +9,7 @@ import $ from "jquery";
 
 import Login from "components/Login";
 import ChatRoom from "components/ChatRoom";
+import AttendeeListToggle from "components/AttendeeListToggle";
 import Person from "entities/Person";
 import Room from "entities/Room";
 
@@ -70,27 +71,15 @@ class Main extends Component {
         return (
             <Router>
                 <div>
-                    <header className="bg-black-80">
-                        <div className="white pa2 f3">Chat</div>
-                    </header>
                     <Route exact path="/" component={({history}) => {
                         return (
-                            <Login
-                                joinRoom={(roomID, name) => {
-                                    this.joinRoom(roomID, name).then(({room, self}) => {
-                                        this.setState({
-                                            self,
-                                            room
-                                        }, () => {
-                                            history.push("/" + room.id);
-                                        });
-                                    }).catch(e => {
-                                        console.error(e);
-                                    });
-                                }}
-                                createRoom={(name) => {
-                                    socket.emit("create-room", name, (data) => {
-                                        this.joinRoom(data.roomID, name).then(({room, self}) => {
+                            <div>
+                                <header className="bg-black-80">
+                                    <div className="dib white pa2 f3">Chat</div>
+                                </header>
+                                <Login
+                                    joinRoom={(roomID, name) => {
+                                        this.joinRoom(roomID, name).then(({room, self}) => {
                                             this.setState({
                                                 self,
                                                 room
@@ -100,38 +89,61 @@ class Main extends Component {
                                         }).catch(e => {
                                             console.error(e);
                                         });
-                                    });
-                                }}
-                            />
+                                    }}
+                                    createRoom={(name) => {
+                                        socket.emit("create-room", name, (data) => {
+                                            this.joinRoom(data.roomID, name).then(({room, self}) => {
+                                                this.setState({
+                                                    self,
+                                                    room
+                                                }, () => {
+                                                    history.push("/" + room.id);
+                                                });
+                                            }).catch(e => {
+                                                console.error(e);
+                                            });
+                                        });
+                                    }}
+                                />
+                            </div>
                         );
                     }} />
                     <Route path="/:roomID" component={({match, history}) => {
                         return (
-                            <ChatRoom
-                                self={this.state.self}
-                                roomID={match.params.roomID}
-                                socket={socket}
-                                room={this.state.room}
-                                history={history}
-                                leaveRoom={() => {
-                                    socket.emit("leave-room", {self: this.state.self, roomID: match.params.roomID}, () => {
-                                        history.push("/");
-                                        this.setState({
-                                            room: null,
-                                            self: null,
+                            <div>
+                                <header className="bg-black-80">
+                                    <div className="dib white pa2 f3">Chat</div>
+                                    <button
+                                        className="input-reset dib w2 h2 pa1 white ba b--white-90 border-box bg-transparent hover-bg-white hover--black">
+                                        <AttendeeListToggle />
+                                    </button>
+                                </header>
+                                <ChatRoom
+                                    self={this.state.self}
+                                    roomID={match.params.roomID}
+                                    socket={socket}
+                                    room={this.state.room}
+                                    history={history}
+                                    leaveRoom={() => {
+                                        socket.emit("leave-room", {self: this.state.self, roomID: match.params.roomID}, () => {
+                                            history.push("/");
+                                            this.setState({
+                                                room: null,
+                                                self: null,
+                                            });
                                         });
-                                    });
-                                }}
-                                destroyRoom={() => {
-                                    socket.emit("destroy-room", {roomID: this.state.room.id}, () => {
-                                        history.push("/");
-                                        this.setState((previous) => ({
-                                            room: Room.destroy(previous.room),
-                                            self: null
-                                        }));
-                                    });
-                                }}
-                            />
+                                    }}
+                                    destroyRoom={() => {
+                                        socket.emit("destroy-room", {roomID: this.state.room.id}, () => {
+                                            history.push("/");
+                                            this.setState((previous) => ({
+                                                room: Room.destroy(previous.room),
+                                                self: null
+                                            }));
+                                        });
+                                    }}
+                                />
+                            </div>
                         );
                     }} />
                 </div>
